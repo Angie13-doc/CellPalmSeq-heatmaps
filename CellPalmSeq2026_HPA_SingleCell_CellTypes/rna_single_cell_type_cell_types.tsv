@@ -1,0 +1,155 @@
+Cell type	Cell type group	Cell type class
+adipocytes	adipocytes	mesenchymal cells
+adrenal cortex cells	adrenal endocrine cells	endocrine cells
+adrenal medulla cells	adrenal endocrine cells	endocrine cells
+alveolar cells type 1	alveolar cells	specialized epithelial cells
+alveolar cells type 2	alveolar cells	specialized epithelial cells
+astrocytes	glial cells	glial cells
+b-cells	b-cells	blood and immune cells
+basal keratinocytes	basal cells	specialized epithelial cells
+basal prostatic cells	basal cells	specialized epithelial cells
+bergmann glia	glial cells	glial cells
+brain excitatory neurons	neuronal cells	neuronal cells
+brain inhibitory neurons	neuronal cells	neuronal cells
+breast hormone-responsive cells	luminal cells	glandular epithelial cells
+breast lactating cells	secretory cells	glandular epithelial cells
+breast myoepithelial cells	secretory gland support	specialized epithelial cells
+breast secretory cells	secretory cells	glandular epithelial cells
+cardiomyocytes	myocytes	muscle cells
+cdc	dendritic cells	blood and immune cells
+cholangiocytes	ductal cells	specialized epithelial cells
+choroid plexus epithelial cells	ciliated cells	ciliated cells
+colonocytes	enterocytes	glandular epithelial cells
+cone photoreceptor cells	neuronal cells	neuronal cells
+conjunctival goblet cells	goblet cells	glandular epithelial cells
+corticotrophs	pituitary endocrine cells	endocrine cells
+cytotrophoblasts	trophoblast cells	trophoblast cells
+decidual stromal cells	stromal cells	mesenchymal cells
+differentiating spermatogonia	spermatogenic cell types	germ cells
+distal convoluted tubule cells	renal nephron cells	specialized epithelial cells
+early primary spermatocytes	spermatogenic cell types	germ cells
+early spermatids	spermatogenic cell types	germ cells
+endometrial ciliated cells	ciliated cells	ciliated cells
+endometrial glandular cells	glandular cells	glandular epithelial cells
+endometrial luminal cells	luminal cells	glandular epithelial cells
+endometrial secretory cells	secretory cells	glandular epithelial cells
+endometrial stromal cells	stromal cells	mesenchymal cells
+enteric stem cells	stem cells	stem and proliferating cells
+enteric transient amplifying cells	proliferating cells	stem and proliferating cells
+enterocytes	enterocytes	glandular epithelial cells
+ependymal cells	ciliated cells	ciliated cells
+epicardial cells	barrier epithelial cells	specialized epithelial cells
+epididymal basal cells	basal cells	specialized epithelial cells
+epididymal clear cells	reproductive supporting cells	specialized epithelial cells
+epididymal efferent duct absorptive cells	ductal cells	specialized epithelial cells
+epididymal efferent duct ciliated cells	ciliated cells	ciliated cells
+epididymal principal cells	reproductive supporting cells	specialized epithelial cells
+erythrocyte progenitors	erythrocytes	blood and immune cells
+erythrocytes	erythrocytes	blood and immune cells
+esophageal apical cells	apical squamous epithelial cells	squamous epithelial cells
+esophageal basal cells	basal cells	specialized epithelial cells
+esophageal suprabasal cells	suprabasal cells	squamous epithelial cells
+extravillous trophoblasts	trophoblast cells	trophoblast cells
+fallopian secretory cells	secretory cells	glandular epithelial cells
+fallopian tube ciliated cells	ciliated cells	ciliated cells
+fibro-adipogenic progenitors	fibro-adipogenic progenitors	mesenchymal cells
+fibroblasts	fibroblasts	mesenchymal cells
+foveolar cells	gastric glandular cells	glandular epithelial cells
+gastric chief cells	gastric glandular cells	glandular epithelial cells
+gastric progenitor cells	proliferating cells	stem and proliferating cells
+goblet cells	goblet cells	glandular epithelial cells
+gonadotrophs	pituitary endocrine cells	endocrine cells
+granulosa cells	reproductive supporting cells	specialized epithelial cells
+hematopoietic stem cells	stem cells	stem and proliferating cells
+hepatic stellate cells	stellate cells	mesenchymal cells
+hepatocytes	hepatocytes	specialized epithelial cells
+hofbauer cells	mononuclear phagocytes	blood and immune cells
+innate lymphoid cells	innate lymphoid cells	blood and immune cells
+kupffer cells	mononuclear phagocytes	blood and immune cells
+lacrimal acinar cells	acinar cells	glandular epithelial cells
+lactotrophs	pituitary endocrine cells	endocrine cells
+late primary spermatocytes	spermatogenic cell types	germ cells
+late spermatids	spermatogenic cell types	germ cells
+leydig cells	leydig cells	endocrine cells
+loop of henle epithelial cells	renal nephron cells	specialized epithelial cells
+lymphatic endothelial cells	endothelial cells	endothelial and mural cells
+macrophages	mononuclear phagocytes	blood and immune cells
+mast cells	mast cells	blood and immune cells
+medullary thymic epithelial cells	secretory gland support	specialized epithelial cells
+megakaryocyte progenitors	megakaryocytes	blood and immune cells
+megakaryocyte-erythroid progenitors	megakaryocytes	blood and immune cells
+megakaryocytes	megakaryocytes	blood and immune cells
+melanocytes	pigment cells	pigment cells
+mesothelial cells	barrier epithelial cells	specialized epithelial cells
+microglia	glial cells	glial cells
+migrating cytotrophoblasts	trophoblast cells	trophoblast cells
+monocyte progenitors	mononuclear phagocytes	blood and immune cells
+monocytes	mononuclear phagocytes	blood and immune cells
+mucous neck cells	gastric glandular cells	glandular epithelial cells
+müller glia	glial cells	glial cells
+myonuclei	myocytes	muscle cells
+myosatellite cells	stem cells	stem and proliferating cells
+neuroendocrine cells	enteroendocrine cells	endocrine cells
+neutrophil progenitors	neutrophils	blood and immune cells
+neutrophils	neutrophils	blood and immune cells
+nk-cells	nk-cells	blood and immune cells
+ocular epithelial cells	barrier epithelial cells	specialized epithelial cells
+oligodendrocyte progenitor cells	glial cells	glial cells
+oligodendrocytes	glial cells	glial cells
+oocytes	oocytes	germ cells
+other brain neurons	neuronal cells	neuronal cells
+ovarian stromal cells	stromal cells	mesenchymal cells
+pancreatic acinar cells	acinar cells	glandular epithelial cells
+pancreatic duct cells	ductal cells	specialized epithelial cells
+pancreatic islet cells	pancreatic islet cells	endocrine cells
+paneth cells	secretory gland support	specialized epithelial cells
+papillary tip epithelial cells	renal nephron cells	specialized epithelial cells
+parietal cells	gastric glandular cells	glandular epithelial cells
+pdcs	dendritic cells	blood and immune cells
+pericytes	mural cells	endothelial and mural cells
+peritubular myoid cells	stromal cells	mesenchymal cells
+pituicytes/fscs	glial cells	glial cells
+pituitary stem cells	stem cells	stem and proliferating cells
+plasma cells	plasma cells	blood and immune cells
+platelets	platelets	blood and immune cells
+podocytes	renal nephron cells	specialized epithelial cells
+prostatic club cells	glandular cells	glandular epithelial cells
+prostatic glandular cells	glandular cells	glandular epithelial cells
+prostatic hillock cells	barrier epithelial cells	specialized epithelial cells
+proximal tubule cells	renal nephron cells	specialized epithelial cells
+renal collecting duct intercalated cells	ductal cells	specialized epithelial cells
+renal collecting duct principal cells	ductal cells	specialized epithelial cells
+renal connecting tubule cells	ductal cells	specialized epithelial cells
+respiratory basal cells	basal cells	specialized epithelial cells
+respiratory ciliated cells	ciliated cells	ciliated cells
+respiratory deuterosomal cells	ciliated cells	ciliated cells
+respiratory ionocytes	ionocytes	specialized epithelial cells
+respiratory secretory cells	secretory cells	glandular epithelial cells
+retinal amacrine cells	neuronal cells	neuronal cells
+retinal bipolar cells	neuronal cells	neuronal cells
+retinal ganglion cells	neuronal cells	neuronal cells
+retinal horizontal cells	neuronal cells	neuronal cells
+retinal pigment epithelial cells	pigment cells	pigment cells
+rod photoreceptor cells	neuronal cells	neuronal cells
+salivary acinar cells	acinar cells	glandular epithelial cells
+salivary basal cells	basal cells	specialized epithelial cells
+salivary duct cells	ductal cells	specialized epithelial cells
+salivary ionocytes	ionocytes	specialized epithelial cells
+salivary myoepithelial cells	secretory gland support	specialized epithelial cells
+schwann cells	glial cells	glial cells
+sertoli cells	reproductive supporting cells	specialized epithelial cells
+smooth muscle cells	smooth muscle cells	muscle cells
+somatotrophs	pituitary endocrine cells	endocrine cells
+submucosal glandular cells	glandular cells	glandular epithelial cells
+suprabasal keratinocytes	suprabasal cells	squamous epithelial cells
+syncytiotrophoblasts	trophoblast cells	trophoblast cells
+t-cells	t-cells	blood and immune cells
+thymic myoid cells	stromal cells	mesenchymal cells
+thymocytes	t-cells	blood and immune cells
+thyrotrophs	pituitary endocrine cells	endocrine cells
+transitional alveolar cells	alveolar cells	specialized epithelial cells
+tuft cells	secretory gland support	specialized epithelial cells
+undifferentiated spermatogonia	spermatogenic cell types	germ cells
+urothelial cells	barrier epithelial cells	specialized epithelial cells
+vascular endothelial cells	endothelial cells	endothelial and mural cells
+vascular smooth muscle cells	mural cells	endothelial and mural cells
