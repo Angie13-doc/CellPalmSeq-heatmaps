@@ -75,9 +75,9 @@
 <div class="actions wide"><button type="button" class="reset">Reset</button><button type="button" class="export">Export CSV</button></div>
 </div>
 </aside><section class="bps-main" aria-label="Expression heatmap">
-<div class="summary" role="status" aria-live="polite"></div><div class="help">Expression: original HPA matrix values (units not specified in supplied CSV). Dataset: CellPalmSeq2026_HPA_NormalTissue.</div><div class="bps-zoom" aria-label="Heatmap magnification"><strong>Heatmap size</strong><button type="button" class="zoom-out" aria-label="Zoom out">−</button><input class="zoom-range" type="range" min="75" max="250" step="25" value="100" aria-label="Heatmap magnification"><button type="button" class="zoom-in" aria-label="Zoom in">+</button><span class="zoom-value" aria-live="polite">100%</span><button type="button" class="zoom-reset">Reset size</button></div><div class="heatmap-navigation"><button type="button" class="page-prev">◀ Previous 150</button><span class="page-status"></span><button type="button" class="page-next">Next 150 ▶</button></div><div class="plot-scroll"><canvas class="canvas" role="img" aria-label="Expression heatmap for selected genes and cell populations" tabindex="0"></canvas><div class="empty" hidden>No matching cell populations or genes. Try a broader search or select more genes.</div></div>
+<div class="summary" role="status" aria-live="polite"></div><div class="help">Expression: nCPM (HPA single-cell RNA-seq). Dataset: CellPalmSeq2026_HPA_NormalTissue.</div><div class="bps-zoom" aria-label="Heatmap magnification"><strong>Heatmap size</strong><button type="button" class="zoom-out" aria-label="Zoom out">−</button><input class="zoom-range" type="range" min="75" max="250" step="25" value="100" aria-label="Heatmap magnification"><button type="button" class="zoom-in" aria-label="Zoom in">+</button><span class="zoom-value" aria-live="polite">100%</span><button type="button" class="zoom-reset">Reset size</button></div><div class="heatmap-navigation"><button type="button" class="page-prev">◀ Previous 150</button><span class="page-status"></span><button type="button" class="page-next">Next 150 ▶</button></div><div class="plot-scroll"><canvas class="canvas" role="img" aria-label="Expression heatmap for selected genes and cell populations" tabindex="0"></canvas><div class="empty" hidden>No matching cell populations or genes. Try a broader search or select more genes.</div></div>
 <div class="heatmap-navigation" aria-label="Horizontal heatmap navigation"><button type="button" class="scroll-left" aria-label="Scroll heatmap left">◀ Left</button><input type="range" class="scroll-position" min="0" max="1000" value="0" step="1" aria-label="Heatmap horizontal position"><button type="button" class="scroll-right" aria-label="Scroll heatmap right">Right ▶</button></div>
-<div class="legend"><span>Expression (nCPM)</span><span>0</span><span class="ramp"></span><strong class="high"></strong></div>
+<div class="colour-transform-control" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0"><label for="colour-transform-select"><strong>Colour values</strong></label><select id="colour-transform-select" aria-label="Colour scale transformation"><option value="raw">Original nCPM (default)</option><option value="log">log₂(nCPM + 1)</option></select><span style="font-size:11px;color:#657080">Hover and CSV retain original values</span></div><div class="legend"><span>Expression (nCPM)</span><span>0</span><span class="ramp"></span><strong class="high"></strong></div>
 <p class="note">Use the horizontal slider or Left/Right buttons to navigate wide heatmaps without browser back gestures. Hover or tap a heatmap tile for nCPM and original HPA metadata. Ranking uses arithmetic means of the displayed expression measurements, not statistical enrichment. When comparing multiple searches, the groups are separated by lines. Fixed colour scaling is recommended for direct comparisons.</p>
 <div class="tooltip" role="tooltip" hidden></div>
 </section></div>
@@ -92,15 +92,15 @@ const cells=new Map(),values=new Map();for(const r of rows){if(!cells.has(r.Clus
 const rankGenes=$('.rank-genes'),rankCells=$('.rank-cells');
 // Organ categories are read directly from the 'Organ' row of the supplied HPA matrix.
 const broadField='Class';const broadNames=[...new Set([...cells.values()].flatMap(r=>String(r[broadField]||'').split(',').map(x=>x.trim()).filter(Boolean)))].sort(collator.compare);
-const broadSelected=new Set();const broadList=$('.broad-list'),broadPanel=$('.broad-panel'),broadToggle=$('.broad-toggle');
+const broadSelected=new Set(broadNames);const broadList=$('.broad-list'),broadPanel=$('.broad-panel'),broadToggle=$('.broad-toggle');
 for(const name of broadNames){const label=document.createElement('label'),cb=document.createElement('input');cb.type='checkbox';cb.value=name;label.append(cb,document.createTextNode(name));broadList.append(label);cb.addEventListener('change',()=>{if(cb.checked)broadSelected.add(name);else broadSelected.delete(name);render()})}
 function syncBroad(){for(const cb of broadList.querySelectorAll('input'))cb.checked=broadSelected.has(cb.value)}
 broadToggle.addEventListener('click',()=>{broadPanel.hidden=!broadPanel.hidden;broadToggle.setAttribute('aria-expanded',String(!broadPanel.hidden))});
-$('.broad-all').addEventListener('click',()=>{broadSelected.clear();syncBroad();render()});
-$('.broad-clear').addEventListener('click',()=>{broadSelected.clear();broadNames.forEach(n=>broadSelected.add(n));syncBroad();render()});
-function broadMatches(r){return broadSelected.size===0||String(r[broadField]||'').split(',').some(n=>broadSelected.has(n.trim()))}
+$('.broad-all').addEventListener('click',()=>{broadSelected.clear();broadNames.forEach(n=>broadSelected.add(n));syncBroad();render()});
+$('.broad-clear').addEventListener('click',()=>{broadSelected.clear();syncBroad();render()});
+function broadMatches(r){return String(r[broadField]||'').split(',').some(n=>broadSelected.has(n.trim()))}
 
-const fixedMax=rows.reduce((max,r)=>Number.isFinite(r.Expression)?Math.max(max,r.Expression):max,0),chosen=new Set(geneNames);
+const colourTransform=$('#colour-transform-select');const colourValue=r=>{const v=Number(r.Expression);return Number.isFinite(v)?(colourTransform.value==='log'?Math.log2(Math.max(0,v)+1):v):NaN};colourTransform.addEventListener('change',()=>render());const fixedMax=rows.reduce((max,r)=>Number.isFinite(r.Expression)?Math.max(max,r.Expression):max,0),chosen=new Set(geneNames);
 const geneList=$('.gene-list');for(const gene of geneNames){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=true;input.value=gene;label.append(input,document.createTextNode(gene));geneList.append(label);input.addEventListener('change',()=>{if(input.checked)chosen.add(gene);else chosen.delete(gene);render()})}
 function syncGenes(){for(const input of geneList.querySelectorAll('input'))input.checked=chosen.has(input.value)}
 const panel=$('.gene-panel'),toggle=$('.gene-toggle');toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden))});
@@ -214,7 +214,7 @@ $('.broad-count').textContent=broadSelected.size===0?'All cell types':broadSelec
  $('.page-status').textContent='Page '+(page+1)+' of '+pageCount+' · '+allCols.length+' matching populations';
  $('.page-prev').disabled=page===0;$('.page-next').disabled=page>=pageCount-1;
  const filtered=cols.flatMap(c=>genes.map(g=>values.get(c+'\u0000'+g)).filter(Boolean));current=filtered;
- const high=scale.value==='fixed'?fixedMax:filtered.reduce((v,r)=>Math.max(v,Number.isFinite(r.Expression)?r.Expression:0),0);$('.high').textContent=high.toFixed(3);
+ const high=scale.value==='fixed'?(colourTransform.value==='log'?Math.log2(fixedMax+1):fixedMax):filtered.reduce((v,r)=>Math.max(v,Number.isFinite(colourValue(r))?colourValue(r):0),0);$('.high').textContent=high.toFixed(3);$('.legend span:first-child').textContent=colourTransform.value==='log'?'Colour: log₂(nCPM + 1)':'Colour: original nCPM';
  const n=cols.length;$('.gene-count').textContent=genes.length===geneNames.length?'All genes ('+genes.length+')':genes.length+' genes selected';
  summary.textContent=allCols.length+' matching tissues ('+n+' displayed)  · '+genes.length+' genes · '+filtered.length+' measurements'+(regionQueries.length>1?' · comparison mode':'');
  const empty=n===0||genes.length===0;$('.empty').hidden=!empty;canvas.hidden=empty;exportBtn.disabled=empty;if(empty){layout=null;syncScrollControls();return}
@@ -223,7 +223,7 @@ $('.broad-count').textContent=broadSelected.size===0?'All cell types':broadSelec
  canvas.width=Math.ceil(width*dpr);canvas.height=Math.ceil(height*dpr);canvas.style.width=width+'px';canvas.style.height=height+'px';
  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);
  const positions=cols.map((_,i)=>left+i*cw+boundaries.filter(boundary=>i>=boundary).length*groupGap);const lookup=new Map();
- for(let x=0;x<n;x++)for(let y=0;y<genes.length;y++){const r=values.get(cols[x]+'\u0000'+genes[y]);if(!r)continue;lookup.set(y*n+x,r);const fraction=high>0?r.Expression/high:0,index=Math.max(0,Math.min(palette.length-1,Math.floor(fraction*(palette.length-1))));ctx.fillStyle=Number.isFinite(r.Expression)?palette[index]:'#333';ctx.fillRect(positions[x],top+y*rh,cw-.5,rh-.5)}
+ for(let x=0;x<n;x++)for(let y=0;y<genes.length;y++){const r=values.get(cols[x]+'\u0000'+genes[y]);if(!r)continue;lookup.set(y*n+x,r);const fraction=high>0?colourValue(r)/high:0,index=Math.max(0,Math.min(palette.length-1,Math.floor(fraction*(palette.length-1))));ctx.fillStyle=Number.isFinite(colourValue(r))?palette[index]:'#333';ctx.fillRect(positions[x],top+y*rh,cw-.5,rh-.5)}
  ctx.font=Math.max(10,Math.round(10*zoomFactor))+'px Arial';ctx.fillStyle='#263649';ctx.textAlign='right';ctx.textBaseline='middle';genes.forEach((g,i)=>ctx.fillText(g,left-8,top+(i+.5)*rh));
  ctx.font=Math.max(8,Math.round(8*zoomFactor))+'px Arial';ctx.textAlign='left';cols.forEach((c,i)=>{ctx.save();ctx.translate(positions[i]+cw/2,top+genes.length*rh+7);ctx.rotate(Math.PI/2);const maxChars=Math.max(12,Math.floor(32/zoomFactor));const displayLabel=c.length>maxChars?c.slice(0,maxChars-1)+'…':c;ctx.fillText(displayLabel,0,0);ctx.restore()});
  for(const boundary of boundaries){const x=left+boundary*cw+(boundaries.indexOf(boundary)+.5)*groupGap;ctx.strokeStyle='#8b9db0';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,top-4);ctx.lineTo(x,top+genes.length*rh+2);ctx.stroke()}
@@ -233,7 +233,7 @@ function showPoint(clientX,clientY){if(!layout)return;const rect=canvas.getBound
  const x=(clientX-rect.left)*layout.width/rect.width,y=(clientY-rect.top)*layout.height/rect.height,row=Math.floor((y-top)/rh);
  const col=layout.positions.findIndex(px=>x>=px&&x<px+cw);if(row<0||row>=layout.genes.length||col<0){tip.hidden=true;return}
  const r=layout.lookup.get(row*layout.n+col);if(!r){tip.hidden=true;return}
- const fields=[['Gene',r.Gene],...Object.entries(r.MatrixMetadata||{}).filter(([k,v])=>String(v).trim()),['Expression (nCPM)',r.SourceValue==null?'NA':r.SourceValue]];
+ const fields=[['Gene',r.Gene],...Object.entries(r.MatrixMetadata||{}).filter(([k,v])=>String(v).trim()),['Expression',r.SourceValue==null?'NA':(colourTransform.value==='log'?Math.log2(Math.max(0,r.SourceValue)+1).toFixed(3)+' log₂(nCPM + 1)':r.SourceValue+' nCPM') ]];
  tip.replaceChildren();
  fields.filter(([,v])=>String(v??'').trim()).forEach(([k,v],i)=>{
   if(i)tip.appendChild(document.createTextNode('\n'));
@@ -264,7 +264,15 @@ canvas.addEventListener('pointermove',trackHover);
 canvas.addEventListener('pointerdown',trackHover);
 canvas.addEventListener('pointerleave',()=>{lastHoverPointer=null;tip.hidden=true});scroll.addEventListener('scroll',()=>{tip.hidden=true;syncScrollControls()});window.addEventListener('blur',()=>tip.hidden=true);
 $('.reset').addEventListener('click',()=>{zoomFactor=1;cw=12;rh=14;zoomRange.value='100';zoomValue.textContent='100%';regionQueries=[''];rebuildRegionInputs();broadSelected.clear();syncBroad();scale.value='fixed';$('.palette-select').value='original';palette=originalPalette;$('.ramp').style.background='linear-gradient(to right,'+palette.join(',')+')';rankGenes.checked=false;rankCells.checked=false;chosen.clear();geneNames.forEach(g=>chosen.add(g));syncGenes();render()});
-$('.export').addEventListener('click',()=>{if(!current.length)return;const keys=['Gene','Organ','Tissue','Expression_source_matrix'],esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[keys.map(esc).join(','),...current.map(r=>[r.Gene,r.MatrixMetadata.Organ,r.MatrixMetadata.Tissue,r.SourceValue].map(esc).join(','))].join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='CellPalmSeq2026_HPA_NormalTissue_selection.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+$('.export').addEventListener('click',()=>{
+ if(!current.length)return;
+ const metadataKeys=[...new Set(current.flatMap(r=>Object.keys(r.MatrixMetadata||{})))];
+ const keys=['Gene','Population',...metadataKeys,'Expression_'+"nCPM"];
+ const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const csv=[keys.map(esc).join(','),...current.map(r=>[r.Gene,r.ClusterName,...metadataKeys.map(k=>(r.MatrixMetadata||{})[k]??''),r.SourceValue].map(esc).join(','))].join('\\r\\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download="CellPalmSeq2026_HPA_SingleCell_CellTypes"+'_selection.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
 render();
 })();
 </script>
