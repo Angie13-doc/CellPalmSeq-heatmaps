@@ -27,3 +27,6 @@ For all 13 heatmaps, every embedded default expression value was numerically che
 - `CellPalmSeq2026_Broad_CCLE_MeanByPrimaryDisease`: 33 primary disease groups; means of original TPM values.
 - `CellPalmSeq2026_Sanger_CMP_MeanByCancerType`: 42 cancer type groups; means of original TPM values.
 These are supplementary, not replacements for individual cell-line heatmaps.
+
+## Colour map and gene-name styling (2026-11-17)
+- All 15 heatmaps use one colour map: reversed Hawaii (Crameri Scientific Colour Maps; pale cyan = low, dark magenta = high), 50 steps. Palette selector removed. Re-apply with `tools/apply_hawaii_palette.py`.
