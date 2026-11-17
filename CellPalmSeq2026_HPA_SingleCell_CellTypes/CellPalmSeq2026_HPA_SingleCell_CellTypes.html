@@ -102,7 +102,7 @@ $('.broad-clear').addEventListener('click',()=>{broadSelected.clear();syncBroad(
 function broadMatches(r){return String(r[broadField]||'').split(',').some(n=>broadSelected.has(n.trim()))}
 
 const colourTransform=$('#colour-transform-select');const colourValue=r=>{const v=Number(r.Expression);return Number.isFinite(v)?(colourTransform.value==='log'?Math.log2(Math.max(0,v)+1):v):NaN};colourTransform.addEventListener('change',()=>render());const fixedMax=rows.reduce((max,r)=>Number.isFinite(r.Expression)?Math.max(max,r.Expression):max,0),chosen=new Set(geneNames);
-const geneList=$('.gene-list');for(const gene of geneNames){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=true;input.value=gene;label.append(input,document.createTextNode(gene));geneList.append(label);input.addEventListener('change',()=>{if(input.checked)chosen.add(gene);else chosen.delete(gene);render()})}
+const geneList=$('.gene-list');for(const gene of geneNames){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=true;input.value=gene;label.append(input,Object.assign(document.createElement('i'),{textContent:gene}));geneList.append(label);input.addEventListener('change',()=>{if(input.checked)chosen.add(gene);else chosen.delete(gene);render()})}
 function syncGenes(){for(const input of geneList.querySelectorAll('input'))input.checked=chosen.has(input.value)}
 const panel=$('.gene-panel'),toggle=$('.gene-toggle');toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden))});
 root.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!panel.hidden){panel.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.focus()}if(!broadPanel.hidden){broadPanel.hidden=true;broadToggle.setAttribute('aria-expanded','false');broadToggle.focus()}}});
@@ -160,7 +160,7 @@ function rebuildRegionInputs(){regionContainer.replaceChildren();regionQueries.f
  function update(){const q=normalize(input.value.trim());panel.replaceChildren();matchesList=[];active=-1;if(q.length<2){hide();return}
  const scored=[];for(const item of suggestions){const at=item.norm.indexOf(q);if(at<0)continue;scored.push({item,score:(at===0?0:1)+(item.kind==='Marker gene'?0.2:0)+(item.label.length/10000)})}
  scored.sort((a,b)=>a.score-b.score||collator.compare(a.item.label,b.item.label));matchesList=scored.slice(0,9).map(x=>x.item);
- for(const item of matchesList){const btn=document.createElement('button');btn.type='button';btn.setAttribute('role','option');btn.setAttribute('aria-selected','false');const title=document.createElement('span');title.textContent=item.label;const small=document.createElement('small');small.textContent=item.kind;btn.append(title,small);btn.addEventListener('mousedown',e=>e.preventDefault());btn.addEventListener('click',()=>choose(item));panel.append(btn)}
+ for(const item of matchesList){const btn=document.createElement('button');btn.type='button';btn.setAttribute('role','option');btn.setAttribute('aria-selected','false');const title=document.createElement('span');title.textContent=item.label;if(item.kind==='Marker gene')title.style.fontStyle='italic';const small=document.createElement('small');small.textContent=item.kind;btn.append(title,small);btn.addEventListener('mousedown',e=>e.preventDefault());btn.addEventListener('click',()=>choose(item));panel.append(btn)}
  panel.hidden=matchesList.length===0;input.setAttribute('aria-expanded',String(!panel.hidden));}
  input.addEventListener('input',()=>{regionQueries[i]=input.value;update();render()});
  input.addEventListener('focus',update);
@@ -213,7 +213,7 @@ $('.broad-count').textContent=broadSelected.size===0?'All cell types':broadSelec
  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);
  const positions=cols.map((_,i)=>left+i*cw+boundaries.filter(boundary=>i>=boundary).length*groupGap);const lookup=new Map();
  for(let x=0;x<n;x++)for(let y=0;y<genes.length;y++){const r=values.get(cols[x]+'\u0000'+genes[y]);if(!r)continue;lookup.set(y*n+x,r);const fraction=high>0?colourValue(r)/high:0,index=Math.max(0,Math.min(palette.length-1,Math.floor(fraction*(palette.length-1))));ctx.fillStyle=Number.isFinite(colourValue(r))?palette[index]:'#333';ctx.fillRect(positions[x],top+y*rh,cw-.5,rh-.5)}
- ctx.font=Math.max(10,Math.round(10*zoomFactor))+'px Arial';ctx.fillStyle='#263649';ctx.textAlign='right';ctx.textBaseline='middle';genes.forEach((g,i)=>ctx.fillText(g,left-8,top+(i+.5)*rh));
+ ctx.font='italic '+Math.max(10,Math.round(10*zoomFactor))+'px Arial';ctx.fillStyle='#263649';ctx.textAlign='right';ctx.textBaseline='middle';genes.forEach((g,i)=>ctx.fillText(g,left-8,top+(i+.5)*rh));
  ctx.font=Math.max(8,Math.round(8*zoomFactor))+'px Arial';ctx.textAlign='left';cols.forEach((c,i)=>{ctx.save();ctx.translate(positions[i]+cw/2,top+genes.length*rh+7);ctx.rotate(Math.PI/2);const maxChars=Math.max(12,Math.floor(32/zoomFactor));const displayLabel=c.length>maxChars?c.slice(0,maxChars-1)+'…':c;ctx.fillText(displayLabel,0,0);ctx.restore()});
  for(const boundary of boundaries){const x=left+boundary*cw+(boundaries.indexOf(boundary)+.5)*groupGap;ctx.strokeStyle='#8b9db0';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,top-4);ctx.lineTo(x,top+genes.length*rh+2);ctx.stroke()}
  if(regionQueries.length>1){ctx.font='bold 12px Arial';ctx.textAlign='left';ctx.fillStyle='#34648d';let offset=0;for(const group of visibleGroups){if(group.cells.length)ctx.fillText(group.label.slice(0,Math.max(5,Math.floor(group.cells.length*cw/7))),positions[offset],20);offset+=group.cells.length}}
@@ -222,12 +222,12 @@ function showPoint(clientX,clientY){if(!layout)return;const rect=canvas.getBound
  const x=(clientX-rect.left)*layout.width/rect.width,y=(clientY-rect.top)*layout.height/rect.height,row=Math.floor((y-top)/rh);
  const col=layout.positions.findIndex(px=>x>=px&&x<px+cw);if(row<0||row>=layout.genes.length||col<0){tip.hidden=true;return}
  const r=layout.lookup.get(row*layout.n+col);if(!r){tip.hidden=true;return}
- const fields=[['Gene',r.Gene],...Object.entries(r.MatrixMetadata||{}).filter(([k,v])=>String(v).trim()),['Expression',r.SourceValue==null?'NA':(colourTransform.value==='log'?Math.log2(Math.max(0,r.SourceValue)+1).toFixed(3)+' log₂(nCPM + 1)':r.SourceValue+' nCPM') ]];
+ const geneFields=new Set(["Gene", "Marker genes", "MarkerGenes", "Marker Genes", "Type marker", "Top Enriched Genes", "Class marker"]),fields=[['Gene',r.Gene],...Object.entries(r.MatrixMetadata||{}).filter(([k,v])=>String(v).trim()),['Expression',r.SourceValue==null?'NA':(colourTransform.value==='log'?Math.log2(Math.max(0,r.SourceValue)+1).toFixed(3)+' log₂(nCPM + 1)':r.SourceValue+' nCPM') ]];
  tip.replaceChildren();
  fields.filter(([,v])=>String(v??'').trim()).forEach(([k,v],i)=>{
   if(i)tip.appendChild(document.createTextNode('\n'));
   const strong=document.createElement('strong');strong.textContent=k+': ';
-  tip.appendChild(strong);tip.appendChild(document.createTextNode(String(v)));
+  tip.appendChild(strong);tip.appendChild(geneFields.has(k)?Object.assign(document.createElement('i'),{textContent:String(v)}):document.createTextNode(String(v)));
  });tip.hidden=false;
  const w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(5,Math.min(clientX+14,window.innerWidth-w-8))+'px';tip.style.top=Math.max(5,Math.min(clientY+14,window.innerHeight-h-8))+'px';}
 const scrollLeftBtn=$('.scroll-left'),scrollRightBtn=$('.scroll-right'),scrollPosition=$('.scroll-position');
@@ -282,7 +282,7 @@ function cpsFigureSVG(){
   parts.push(`<rect x="${positions[x]}" y="${top+y*rh}" width="${Math.max(0.5,cw-.5)}" height="${Math.max(0.5,rh-.5)}" fill="${esc(color)}"/>`);
  }
  const geneFont=Math.max(10,Math.round(10*zoomFactor));
- genes.forEach((g,i)=>parts.push(`<text x="${left-8}" y="${top+(i+.5)*rh}" text-anchor="end" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="${geneFont}" fill="#263649">${esc(g)}</text>`));
+ genes.forEach((g,i)=>parts.push(`<text x="${left-8}" y="${top+(i+.5)*rh}" text-anchor="end" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="${geneFont}" font-style="italic" fill="#263649">${esc(g)}</text>`));
  const colFont=Math.max(8,Math.round(8*zoomFactor));
  cols.forEach((c,i)=>{
   const maxChars=Math.max(12,Math.floor(32/zoomFactor));const label=c.length>maxChars?c.slice(0,maxChars-1)+'…':c;

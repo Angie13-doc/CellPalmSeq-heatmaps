@@ -23,7 +23,7 @@ function readableBiccnLabel(label){
 const hover=document.getElementById('bps-hover');
 function showHover(event,meta,name,value,units,gene){
   hover.replaceChildren();
-  const head=document.createElement('div');head.className='heading';head.textContent=gene+' · '+name;hover.append(head);
+  const head=document.createElement('div');head.className='heading';head.append(Object.assign(document.createElement('i'),{textContent:gene}),' · '+name);hover.append(head);
   const fields=Object.entries(meta||{}).filter(([k])=>!/^displayed (units|expression)$/i.test(k));
   fields.forEach(([k,v])=>{if(v===null||v===undefined||String(v).trim()===''||String(v).toLowerCase()==='nan')return;
     const line=document.createElement('div');line.className='field';const label=document.createElement('strong');
