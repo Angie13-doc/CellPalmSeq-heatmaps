@@ -23,7 +23,7 @@ function readableBiccnLabel(label){
 const hover=document.getElementById('bps-hover');
 function showHover(event,meta,name,value,units,gene){
   hover.replaceChildren();
-  const head=document.createElement('div');head.className='heading';head.append(Object.assign(document.createElement('i'),{textContent:gene}),' · '+name);hover.append(head);
+  const head=document.createElement('div');head.className='heading';head.append(Object.assign(document.createElement('i'),{textContent:gene.toUpperCase()}),' · '+name);hover.append(head);
   const fields=Object.entries(meta||{}).filter(([k])=>!/^displayed (units|expression)$/i.test(k));
   fields.forEach(([k,v])=>{if(v===null||v===undefined||String(v).trim()===''||String(v).toLowerCase()==='nan')return;
     const line=document.createElement('div');line.className='field';const label=document.createElement('strong');
@@ -51,7 +51,7 @@ function exportRows(d,key,rows){
  const meta=metadata[d.id]||[];
  const columns=[...new Set(rows.flatMap(r=>Object.keys(meta[r[2]]||{})))];
  const records=[['Gene','Dataset','Population','Original expression','Original units','Displayed expression','Displayed units',...columns]];
- rows.forEach(([name,value,idx])=>records.push([key,d.title,name,value,d.units,displayed(value),unit(d),...columns.map(c=>(meta[idx]||{})[c]??'')]));
+ rows.forEach(([name,value,idx])=>records.push([key.toUpperCase(),d.title,name,value,d.units,displayed(value),unit(d),...columns.map(c=>(meta[idx]||{})[c]??'')]));
  return records;
 }
 function aggregateCancerRows(d, rawRows, gene){
@@ -76,7 +76,7 @@ function aggregateCancerRows(d, rawRows, gene){
 function exportAggregated(d,key,rows){
  const field=d.id==='CCLE_Broad_TPM(1)'?'Primary disease':d.id==='CMP_Sanger_TPM'?'Cancer type':'Population';
  const records=[['Gene','Dataset',field,'Mean original expression','Original units','Displayed expression','Displayed units','Cell lines (n)','Contributing cell lines']];
- rows.forEach(r=>records.push([key,d.title,r.name,r.value??'',d.units,displayed(r.value),unit(d),r.n,r.meta['Contributing cell lines']||'']));
+ rows.forEach(r=>records.push([key.toUpperCase(),d.title,r.name,r.value??'',d.units,displayed(r.value),unit(d),r.n,r.meta['Contributing cell lines']||'']));
  return records;
 }
 function render(){
@@ -103,7 +103,7 @@ function render(){
    const download=document.createElement('button');download.type='button';download.className='download';
    download.textContent='Download shown data (CSV)';
    download.setAttribute('aria-label','Download displayed '+d.title+' data as CSV');
-   download.addEventListener('click',()=>saveCSV('CellPalmSeq_'+key+'_'+d.id+'_shown.csv',isGrouped?exportAggregated(d,key,rows):exportRows(d,key,rows.map(r=>[r.name,r.value,raw.findIndex(x=>x[0]===r.name)]))));
+   download.addEventListener('click',()=>saveCSV('CellPalmSeq_'+key.toUpperCase()+'_'+d.id+'_shown.csv',isGrouped?exportAggregated(d,key,rows):exportRows(d,key,rows.map(r=>[r.name,r.value,raw.findIndex(x=>x[0]===r.name)]))));
    hd.append(download);p.append(hd);
    const list=document.createElement('div');list.className='rows';
    rows.forEach(({name,value:v,meta,n})=>{
