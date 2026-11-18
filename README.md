@@ -58,6 +58,9 @@ Genes are rows and columns are cell lines, tissues, cell types or samples, colou
 - **Expression scale** (CCLE, Sanger and HPA pages): original values, or log₂(value + 1) for colours. Hover and CSV keep the original values.
 - **Rank** genes and/or columns by mean expression.
 - **Browse:** every matching column sits in one strip that scrolls sideways. When the strip is wider than the view, a *Whole selection* band above it summarises everything selected, with a frame for the visible part. Click or drag the band, use its ◀ Left / Right ▶ buttons, or Tab to it and use the arrow keys, Page Up/Down and Home/End. *Heatmap size* zooms.
+
+  **How the *Whole selection* band is drawn.** The band shows every selected column, squeezed to the width of the heatmap on your screen, with genes in the same order as the heatmap rows. When there are more columns than screen pixels across the band, several neighbouring columns share one screen pixel, and that pixel takes the **highest** of their values (for each gene). So a single strongly expressing column always shows up in the band, even next to low ones. A dark spot means at least one column there reaches that level, not that every column does; the heatmap below shows each column's own value. How much the band squeezes depends on the number of columns and on your screen: its width, and how many pixels it packs into that width. On a standard screen, Yao 2023 GABAergic (2,025 clusters) puts about 2 columns in each pixel and Glutamatergic (2,597) about 3; on a high-resolution (Retina) screen, about 1 and 1.4. When each column has its own screen pixel, the band shows exact values. Thin vertical lines in the band mark the starts of categories or comparison groups.
+
 - **Hover** (or tap) a tile for the gene, the column's full source metadata, and the expression value.
 - **Export** the whole selection as CSV, SVG or high-resolution PNG, optionally with a transparent background. Very wide selections may need SVG.
 
