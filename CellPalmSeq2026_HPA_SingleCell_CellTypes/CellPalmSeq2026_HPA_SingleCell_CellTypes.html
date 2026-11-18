@@ -357,12 +357,16 @@ $('.export').addEventListener('click',()=>{
 function cpsFigureSVG(){
  if(!layout || !layout.n || !layout.genes.length) return null;
  const {n,genes,cols,positions,width,height}=layout;
- const extra=66, fullHeight=height+extra;
  const high=Number($('.high').textContent)||1;
  const legendText=$('.legend span:first-child')?.textContent||'Expression';
  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
  const transparent=$('.figure-transparent')?.checked;
- const parts=[`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${fullHeight}" viewBox="0 0 ${width} ${fullHeight}">`];
+ // Legend below the heatmap: units line, colour bar, then "0" and the maximum on one line under the bar.
+ const measureText=(s,font)=>{const c=document.createElement('canvas').getContext('2d');c.font=font;return c.measureText(String(s)).width};
+ const highLabel=high.toFixed(3),lx=left,rampW=Math.min(220,Math.max(160,width-left-right));
+ const legendW=Math.max(measureText(legendText,'11px Arial'),rampW,measureText('0','10px Arial')+measureText(highLabel,'10px Arial')+16);
+ const figW=Math.ceil(Math.max(width,lx+legendW+right)),ly=height+16,ry=ly+8,labelY=ry+12+12,fullHeight=Math.ceil(labelY+10);
+ const parts=[`<svg xmlns="http://www.w3.org/2000/svg" width="${figW}" height="${fullHeight}" viewBox="0 0 ${figW} ${fullHeight}">`];
  if(!transparent)parts.push(`<rect width="100%" height="100%" fill="#ffffff"/>`);
  for(let x=0;x<n;x++)for(let y=0;y<genes.length;y++){
   const r=layout.lookup.get(y*n+x);if(!r)continue;
@@ -380,15 +384,13 @@ function cpsFigureSVG(){
  });
  // Separate comparison groups at their visual gaps.
  for(let i=1;i<n;i++)if(positions[i]-positions[i-1]>cw+2){const x=(positions[i-1]+cw+positions[i])/2;parts.push(`<line x1="${x}" y1="${top-4}" x2="${x}" y2="${top+genes.length*rh+2}" stroke="#8b9db0" stroke-width="1.5"/>`)}
- const ly=height+16, lx=left, rampW=Math.min(220,Math.max(70,width-left-right-30));
  parts.push(`<text x="${lx}" y="${ly}" font-family="Arial,sans-serif" font-size="11" fill="#263649">${esc(legendText)}</text>`);
- const ry=ly+12;
  const stops=palette.map((c,i)=>`<stop offset="${(100*i/Math.max(1,palette.length-1)).toFixed(3)}%" stop-color="${esc(c)}"/>`).join('');
  parts.push(`<defs><linearGradient id="cps-legend-gradient" x1="0" y1="0" x2="1" y2="0">${stops}</linearGradient></defs>`);
- parts.push(`<rect x="${lx+16}" y="${ry}" width="${rampW}" height="12" fill="url(#cps-legend-gradient)" stroke="#9aa9b6" stroke-width=".5"/>`);
- parts.push(`<text x="${lx}" y="${ry+10}" font-family="Arial,sans-serif" font-size="10" fill="#263649">0</text>`);
- parts.push(`<text x="${lx+22+rampW}" y="${ry+10}" font-family="Arial,sans-serif" font-size="10" fill="#263649">${esc(high.toFixed(3))}</text>`);
- parts.push('</svg>');return {svg:parts.join(''),width,height:fullHeight};
+ parts.push(`<rect x="${lx}" y="${ry}" width="${rampW}" height="12" fill="url(#cps-legend-gradient)" stroke="#9aa9b6" stroke-width=".5"/>`);
+ parts.push(`<text x="${lx}" y="${labelY}" font-family="Arial,sans-serif" font-size="10" fill="#263649">0</text>`);
+ parts.push(`<text x="${lx+rampW}" y="${labelY}" text-anchor="end" font-family="Arial,sans-serif" font-size="10" fill="#263649">${esc(highLabel)}</text>`);
+ parts.push('</svg>');return {svg:parts.join(''),width:figW,height:fullHeight};
 }
 function cpsSaveBlob(blob,filename){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000)}
 function cpsExportSVG(){const fig=cpsFigureSVG();if(!fig)return;cpsSaveBlob(new Blob([fig.svg],{type:'image/svg+xml;charset=utf-8'}),document.title.replace(/[^a-z0-9_-]+/gi,'_')+'_heatmap.svg')}
