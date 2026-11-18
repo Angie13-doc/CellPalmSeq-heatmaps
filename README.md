@@ -55,7 +55,7 @@ Genes are rows and columns are cell lines, tissues, cell types or samples, colou
 - **Search** one or more cell lines, tissues or metadata values. Each extra search becomes a labelled comparison group. Suggestions come from the dataset's own annotations.
 - **Filter** by the dataset's categories, and choose which genes to show (all, ZDHHC only, non-ZDHHC, or any set).
 - **Colour scale:** *Fixed across all cells* uses the dataset maximum, which is best for comparing searches. *Fit current selection* uses the maximum across everything selected, on screen or not.
-- **Expression scale** (CCLE, Sanger and HPA pages): original values, or log₂(value + 1) for colours. Hover and CSV keep the original values.
+- **Expression scale** (CCLE, Sanger and HPA pages): original values, or log₂(value + 1) for colours. The hover always shows the original value and, with log₂ on, the log value too (e.g. "25.85 TPM (log₂(TPM + 1) = 4.747)"). CSV keeps the original values.
 - **Rank** genes and/or columns by mean expression.
 - **Browse:** every matching column sits in one strip that scrolls sideways. When the strip is wider than the view, a *Whole selection* band above it summarises everything selected, with a frame for the visible part. Click or drag the band, use its ◀ Left / Right ▶ buttons, or Tab to it and use the arrow keys, Page Up/Down and Home/End. *Heatmap size* zooms.
 
@@ -89,6 +89,7 @@ The dataset pages were first generated outside this repository from the source m
 | `compact_heatmap_data.py` | Stored the embedded data compactly and added the decoder. Before writing a page, it checks that the decoded data matches the original exactly. |
 | `verify_compact_data.js` | Repeats that check with Node.js: `node tools/verify_compact_data.js ORIGINAL.html COMPACT.html`. |
 | `fix_export_scale_bar.py` | Laid out the SVG/PNG scale bar so it is never clipped. |
+| `hover_original_and_log.py` | Made the hover show the original value and, with log₂ on, the log value too. |
 
 The same scripts are used in BrainPalmSeq and handle both sites' pages.
 
@@ -130,7 +131,8 @@ Most scripts are one-off migrations and refuse to run twice on the same page. Ch
   - CSV line-break fix;
   - compact embedded data (104 MB to 4 MB);
   - keyboard and button navigation;
-  - unclipped SVG/PNG scale bar.
+  - unclipped SVG/PNG scale bar;
+  - hover shows both the original and the log₂ value when the log₂ scale is on.
 
 ## Citation
 

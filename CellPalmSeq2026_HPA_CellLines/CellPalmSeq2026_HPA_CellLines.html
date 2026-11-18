@@ -225,7 +225,7 @@ function showPoint(clientX,clientY){if(!layout)return;const rect=canvas.getBound
  const vx=clientX-rect.left,x=vx<left?-1:vx+scroll.scrollLeft,y=clientY-rect.top,row=Math.floor((y-top)/rh);
  const col=x<0?-1:bpsColAt(x);if(row<0||row>=layout.genes.length||col<0){tip.hidden=true;return}
  const r=layout.lookup.get(row*layout.n+col);if(!r){tip.hidden=true;return}
- const geneFields=new Set(["Gene", "Marker genes", "MarkerGenes", "Marker Genes", "Type marker", "Top Enriched Genes", "Class marker"]),fields=[['Gene',r.Gene],...Object.entries(r.MatrixMetadata||{}).filter(([k,v])=>String(v).trim()),['Expression',r.SourceValue==null?'NA':(colourTransform.value==='log'?Math.log2(Math.max(0,r.SourceValue)+1).toFixed(3)+' log₂(nTPM + 1)':r.SourceValue+' nTPM') ]];
+ const geneFields=new Set(["Gene", "Marker genes", "MarkerGenes", "Marker Genes", "Type marker", "Top Enriched Genes", "Class marker"]),fields=[['Gene',r.Gene],...Object.entries(r.MatrixMetadata||{}).filter(([k,v])=>String(v).trim()),['Expression',r.SourceValue==null?'NA':(r.SourceValue+' nTPM'+(colourTransform.value==='log'?' (log₂(nTPM + 1) = '+Math.log2(Math.max(0,r.SourceValue)+1).toFixed(3)+')':'')) ]];
  tip.replaceChildren();
  fields.filter(([,v])=>String(v??'').trim()).forEach(([k,v],i)=>{
   if(i)tip.appendChild(document.createTextNode('\n'));
