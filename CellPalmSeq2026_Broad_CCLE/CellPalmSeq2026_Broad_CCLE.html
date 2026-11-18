@@ -73,6 +73,10 @@
 #bps-compare .bps-ov-head strong{color:#263649}
 #bps-compare .bps-ov-range{font-variant-numeric:tabular-nums}
 #bps-compare .bps-ov{display:block;width:100%;height:72px;border:1px solid #dfe5ed;cursor:pointer;touch-action:none}
+#bps-compare .bps-ov:focus-visible{outline:2px solid #336b9c;outline-offset:2px}
+#bps-compare .bps-ov-nav{display:inline-flex;align-items:center;gap:6px}
+#bps-compare .bps-ov-nav button{font-size:11px;padding:2px 7px;min-height:0;cursor:pointer;background:#f2f6fa}
+#bps-compare .bps-ov-nav button:disabled{opacity:.4;cursor:default}
 </style>
 <div class="bps-layout"><aside class="bps-sidebar" aria-label="Heatmap search and display controls">
 <div class="controls">
@@ -86,7 +90,7 @@
 <div class="actions wide"><button type="button" class="reset">Reset</button><button type="button" class="export">Export CSV</button></div>
 </div>
 </aside><section class="bps-main" aria-label="Expression heatmap">
-<div class="summary" role="status" aria-live="polite"></div><div class="help">Expression units: TPM. Default colour values: original TPM; optional log₂(TPM + 1). Dataset: CellPalmSeq2026_Broad_CCLE.</div><div class="bps-zoom" aria-label="Heatmap magnification"><strong>Heatmap size</strong><button type="button" class="zoom-out" aria-label="Zoom out">−</button><input class="zoom-range" type="range" min="75" max="250" step="25" value="100" aria-label="Heatmap magnification"><button type="button" class="zoom-in" aria-label="Zoom in">+</button><span class="zoom-value" aria-live="polite">100%</span><button type="button" class="zoom-reset">Reset size</button></div><div class="bps-overview" hidden><div class="bps-ov-head"><span><strong>Whole selection</strong> · click or drag to jump; each line shows the highest value among the columns it covers</span><span class="bps-ov-range"></span></div><canvas class="bps-ov" role="img" aria-label="Summary of every selected column; click or drag to jump"></canvas></div><div class="plot-scroll"><canvas class="canvas" role="img" aria-label="Expression heatmap for selected genes and cell lines" tabindex="0"></canvas><div class="bps-spacer"></div><div class="empty" hidden>No matching cell lines or genes. Try a broader search or select more genes.</div></div>
+<div class="summary" role="status" aria-live="polite"></div><div class="help">Expression units: TPM. Default colour values: original TPM; optional log₂(TPM + 1). Dataset: CellPalmSeq2026_Broad_CCLE.</div><div class="bps-zoom" aria-label="Heatmap magnification"><strong>Heatmap size</strong><button type="button" class="zoom-out" aria-label="Zoom out">−</button><input class="zoom-range" type="range" min="75" max="250" step="25" value="100" aria-label="Heatmap magnification"><button type="button" class="zoom-in" aria-label="Zoom in">+</button><span class="zoom-value" aria-live="polite">100%</span><button type="button" class="zoom-reset">Reset size</button></div><div class="bps-overview" hidden><div class="bps-ov-head"><span><strong>Whole selection</strong> · click, drag or use the arrow keys to jump; each line shows the highest value among the columns it covers</span><span class="bps-ov-nav"><button type="button" class="bps-ov-left" aria-label="Scroll heatmap left">◀ Left</button><span class="bps-ov-range"></span><button type="button" class="bps-ov-right" aria-label="Scroll heatmap right">Right ▶</button></span></div><canvas class="bps-ov" role="slider" tabindex="0" aria-label="Heatmap position. Arrow keys, Page Up, Page Down, Home and End move through the columns; click or drag to jump"></canvas></div><div class="plot-scroll"><canvas class="canvas" role="img" aria-label="Expression heatmap for selected genes and cell lines" tabindex="0"></canvas><div class="bps-spacer"></div><div class="empty" hidden>No matching cell lines or genes. Try a broader search or select more genes.</div></div>
 <div class="legend"><span>Expression (TPM)</span><span>0</span><span class="ramp"></span><strong class="high"></strong></div>
 <p class="note">Scroll sideways through wide heatmaps, or click or drag the summary band above the heatmap to jump. Hover or tap a heatmap tile for original TPM values and exact source-matrix metadata. Ranking uses arithmetic means of expression measurements, not statistical enrichment. When comparing multiple searches, the groups are separated by lines. Fixed colour scaling is recommended for direct comparisons.</p>
 <div class="tooltip" role="tooltip" hidden></div>
@@ -231,11 +235,12 @@ function showPoint(clientX,clientY){if(!layout)return;const rect=canvas.getBound
  const w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(5,Math.min(clientX+14,window.innerWidth-w-8))+'px';tip.style.top=Math.max(5,Math.min(clientY+14,window.innerHeight-h-8))+'px';}
 // Continuous heatmap (no paging). Every selected column is laid out in one strip;
 // a viewport-sized canvas, sticky inside .plot-scroll, draws only the visible part.
-// The summary band (.bps-ov) shows the whole selection; click or drag it to jump.
+// The summary band (.bps-ov) shows the whole selection; click or drag it to jump. It is also a
+// keyboard slider (arrows, Page Up/Down, Home/End), and ◀ Left / Right ▶ buttons sit beside it.
 // `layout` keeps its original shape ({n,genes,cols,positions,lookup,width,height},
 // positions in full-strip coordinates), so hover and SVG/PNG/CSV export cover the
 // whole selection.
-const bpsOv=$('.bps-ov'),bpsOvBox=$('.bps-overview'),bpsOvRange=$('.bps-ov-range'),bpsSpacer=$('.bps-spacer');
+const bpsOv=$('.bps-ov'),bpsOvBox=$('.bps-overview'),bpsOvRange=$('.bps-ov-range'),bpsSpacer=$('.bps-spacer'),bpsLeftBtn=$('.bps-ov-left'),bpsRightBtn=$('.bps-ov-right');
 let bpsState=null,bpsRaf=0,bpsOvBase=null,bpsColourOf=r=>Number(r.Expression);
 function bpsColAt(x){if(!layout)return -1;const p=layout.positions;let lo=0,hi=p.length-1,ans=-1;while(lo<=hi){const m=(lo+hi)>>1;if(p[m]<=x){ans=m;lo=m+1}else hi=m-1}return ans>=0&&x<p[ans]+cw?ans:-1}
 function bpsFirstAt(x){const p=layout.positions;let lo=0,hi=p.length-1,ans=0;while(lo<=hi){const m=(lo+hi)>>1;if(p[m]+cw<=x)lo=m+1;else{ans=m;hi=m-1}}return lo>=p.length?p.length:ans}
@@ -300,9 +305,19 @@ function bpsDrawOverviewFrame(){
  const a=Math.min(N-1,bpsFirstAt(sx+left)),bEnd=Math.max(a,bpsFirstAt(sx+viewW)-1);
  const x0=a/N*w,x1=Math.max(x0+3*dpr,(Math.min(N-1,bEnd)+1)/N*w);c.lineWidth=2*dpr;c.strokeStyle='#263649';c.strokeRect(x0+dpr,dpr,Math.max(1,x1-x0-2*dpr),bpsOv.height-2*dpr);
  bpsOvRange.textContent='Showing '+(a+1).toLocaleString()+'–'+(Math.min(N-1,bEnd)+1).toLocaleString()+' of '+N.toLocaleString();
+ bpsOv.setAttribute('aria-valuemin','1');bpsOv.setAttribute('aria-valuemax',String(N));bpsOv.setAttribute('aria-valuenow',String(a+1));bpsOv.setAttribute('aria-valuetext',bpsOvRange.textContent);
+ const maxScroll=Math.max(0,scroll.scrollWidth-scroll.clientWidth);bpsLeftBtn.disabled=sx<=1;bpsRightBtn.disabled=sx>=maxScroll-1;
 }
 function syncScrollControls(){if(!bpsRaf)bpsRaf=requestAnimationFrame(bpsDraw)}
 function bpsJump(clientX){if(!layout||!layout.n)return;const rect=bpsOv.getBoundingClientRect(),f=Math.max(0,Math.min(1,(clientX-rect.left)/rect.width)),k=Math.min(layout.n-1,Math.floor(f*layout.n));const viewW=scroll.clientWidth;scroll.scrollLeft=Math.max(0,layout.positions[k]-left-(viewW-left)/2)}
+// Keyboard and buttons: a step is a quarter of the visible heatmap, a page is all of it.
+function bpsView(){return Math.max(120,scroll.clientWidth-left)}
+function bpsScrollTo(x){scroll.scrollLeft=Math.max(0,Math.min(scroll.scrollWidth-scroll.clientWidth,x))}
+bpsOv.addEventListener('keydown',e=>{const k=e.key,v=bpsView(),x=scroll.scrollLeft;let to=null;
+ if(k==='ArrowRight'||k==='ArrowDown')to=x+v/4;else if(k==='ArrowLeft'||k==='ArrowUp')to=x-v/4;else if(k==='PageDown')to=x+v;else if(k==='PageUp')to=x-v;else if(k==='Home')to=0;else if(k==='End')to=scroll.scrollWidth;
+ if(to===null)return;e.preventDefault();bpsScrollTo(to)});
+bpsLeftBtn.addEventListener('click',()=>bpsScrollTo(scroll.scrollLeft-bpsView()*.75));
+bpsRightBtn.addEventListener('click',()=>bpsScrollTo(scroll.scrollLeft+bpsView()*.75));
 let bpsDragging=false;
 bpsOv.addEventListener('pointerdown',e=>{bpsDragging=true;try{bpsOv.setPointerCapture(e.pointerId)}catch(_){}bpsJump(e.clientX)});
 bpsOv.addEventListener('pointermove',e=>{if(bpsDragging)bpsJump(e.clientX)});

@@ -1,10 +1,11 @@
 // Continuous heatmap (no paging). Every selected column is laid out in one strip;
 // a viewport-sized canvas, sticky inside .plot-scroll, draws only the visible part.
-// The summary band (.bps-ov) shows the whole selection; click or drag it to jump.
+// The summary band (.bps-ov) shows the whole selection; click or drag it to jump. It is also a
+// keyboard slider (arrows, Page Up/Down, Home/End), and ◀ Left / Right ▶ buttons sit beside it.
 // `layout` keeps its original shape ({n,genes,cols,positions,lookup,width,height},
 // positions in full-strip coordinates), so hover and SVG/PNG/CSV export cover the
 // whole selection.
-const bpsOv=$('.bps-ov'),bpsOvBox=$('.bps-overview'),bpsOvRange=$('.bps-ov-range'),bpsSpacer=$('.bps-spacer');
+const bpsOv=$('.bps-ov'),bpsOvBox=$('.bps-overview'),bpsOvRange=$('.bps-ov-range'),bpsSpacer=$('.bps-spacer'),bpsLeftBtn=$('.bps-ov-left'),bpsRightBtn=$('.bps-ov-right');
 let bpsState=null,bpsRaf=0,bpsOvBase=null,bpsColourOf=r=>Number(r.Expression);
 function bpsColAt(x){if(!layout)return -1;const p=layout.positions;let lo=0,hi=p.length-1,ans=-1;while(lo<=hi){const m=(lo+hi)>>1;if(p[m]<=x){ans=m;lo=m+1}else hi=m-1}return ans>=0&&x<p[ans]+cw?ans:-1}
 function bpsFirstAt(x){const p=layout.positions;let lo=0,hi=p.length-1,ans=0;while(lo<=hi){const m=(lo+hi)>>1;if(p[m]+cw<=x)lo=m+1;else{ans=m;hi=m-1}}return lo>=p.length?p.length:ans}
@@ -69,9 +70,19 @@ function bpsDrawOverviewFrame(){
  const a=Math.min(N-1,bpsFirstAt(sx+left)),bEnd=Math.max(a,bpsFirstAt(sx+viewW)-1);
  const x0=a/N*w,x1=Math.max(x0+3*dpr,(Math.min(N-1,bEnd)+1)/N*w);c.lineWidth=2*dpr;c.strokeStyle='#263649';c.strokeRect(x0+dpr,dpr,Math.max(1,x1-x0-2*dpr),bpsOv.height-2*dpr);
  bpsOvRange.textContent='Showing '+(a+1).toLocaleString()+'–'+(Math.min(N-1,bEnd)+1).toLocaleString()+' of '+N.toLocaleString();
+ bpsOv.setAttribute('aria-valuemin','1');bpsOv.setAttribute('aria-valuemax',String(N));bpsOv.setAttribute('aria-valuenow',String(a+1));bpsOv.setAttribute('aria-valuetext',bpsOvRange.textContent);
+ const maxScroll=Math.max(0,scroll.scrollWidth-scroll.clientWidth);bpsLeftBtn.disabled=sx<=1;bpsRightBtn.disabled=sx>=maxScroll-1;
 }
 function syncScrollControls(){if(!bpsRaf)bpsRaf=requestAnimationFrame(bpsDraw)}
 function bpsJump(clientX){if(!layout||!layout.n)return;const rect=bpsOv.getBoundingClientRect(),f=Math.max(0,Math.min(1,(clientX-rect.left)/rect.width)),k=Math.min(layout.n-1,Math.floor(f*layout.n));const viewW=scroll.clientWidth;scroll.scrollLeft=Math.max(0,layout.positions[k]-left-(viewW-left)/2)}
+// Keyboard and buttons: a step is a quarter of the visible heatmap, a page is all of it.
+function bpsView(){return Math.max(120,scroll.clientWidth-left)}
+function bpsScrollTo(x){scroll.scrollLeft=Math.max(0,Math.min(scroll.scrollWidth-scroll.clientWidth,x))}
+bpsOv.addEventListener('keydown',e=>{const k=e.key,v=bpsView(),x=scroll.scrollLeft;let to=null;
+ if(k==='ArrowRight'||k==='ArrowDown')to=x+v/4;else if(k==='ArrowLeft'||k==='ArrowUp')to=x-v/4;else if(k==='PageDown')to=x+v;else if(k==='PageUp')to=x-v;else if(k==='Home')to=0;else if(k==='End')to=scroll.scrollWidth;
+ if(to===null)return;e.preventDefault();bpsScrollTo(to)});
+bpsLeftBtn.addEventListener('click',()=>bpsScrollTo(scroll.scrollLeft-bpsView()*.75));
+bpsRightBtn.addEventListener('click',()=>bpsScrollTo(scroll.scrollLeft+bpsView()*.75));
 let bpsDragging=false;
 bpsOv.addEventListener('pointerdown',e=>{bpsDragging=true;try{bpsOv.setPointerCapture(e.pointerId)}catch(_){}bpsJump(e.clientX)});
 bpsOv.addEventListener('pointermove',e=>{if(bpsDragging)bpsJump(e.clientX)});

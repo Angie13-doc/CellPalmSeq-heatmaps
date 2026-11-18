@@ -29,13 +29,20 @@ CSS = """
 #bps-compare .bps-ov-head strong{color:#263649}
 #bps-compare .bps-ov-range{font-variant-numeric:tabular-nums}
 #bps-compare .bps-ov{display:block;width:100%;height:72px;border:1px solid #dfe5ed;cursor:pointer;touch-action:none}
+#bps-compare .bps-ov:focus-visible{outline:2px solid #336b9c;outline-offset:2px}
+#bps-compare .bps-ov-nav{display:inline-flex;align-items:center;gap:6px}
+#bps-compare .bps-ov-nav button{font-size:11px;padding:2px 7px;min-height:0;cursor:pointer;background:#f2f6fa}
+#bps-compare .bps-ov-nav button:disabled{opacity:.4;cursor:default}
 """
 
 OVERVIEW_HTML = (
     '<div class="bps-overview" hidden><div class="bps-ov-head"><span><strong>Whole selection</strong>'
-    ' · click or drag to jump; each line shows the highest value among the columns it covers</span>'
-    '<span class="bps-ov-range"></span></div>'
-    '<canvas class="bps-ov" role="img" aria-label="Summary of every selected column; click or drag to jump"></canvas></div>'
+    ' · click, drag or use the arrow keys to jump; each line shows the highest value among the columns it covers</span>'
+    '<span class="bps-ov-nav"><button type="button" class="bps-ov-left" aria-label="Scroll heatmap left">◀ Left</button>'
+    '<span class="bps-ov-range"></span>'
+    '<button type="button" class="bps-ov-right" aria-label="Scroll heatmap right">Right ▶</button></span></div>'
+    '<canvas class="bps-ov" role="slider" tabindex="0" aria-label="Heatmap position. Arrow keys, Page Up, Page Down, '
+    'Home and End move through the columns; click or drag to jump"></canvas></div>'
 )
 PAGE_NAV_HTML = ('<div class="heatmap-navigation"><button type="button" class="page-prev">◀ Previous 150</button>'
                  '<span class="page-status"></span><button type="button" class="page-next">Next 150 ▶</button></div>')
