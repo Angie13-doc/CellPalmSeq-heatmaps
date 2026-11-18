@@ -27,6 +27,7 @@ CSS = """
 #bps-compare .bps-overview[hidden]{display:none}
 #bps-compare .bps-ov-head{display:flex;justify-content:space-between;gap:4px 10px;flex-wrap:wrap;font-size:11px;color:#5e6d7b;margin-bottom:3px}
 #bps-compare .bps-ov-head strong{color:#263649}
+#bps-compare .bps-ov-note{font-size:11px;color:#5e6d7b;margin:0 0 4px}
 #bps-compare .bps-ov-range{font-variant-numeric:tabular-nums}
 #bps-compare .bps-ov{display:block;width:100%;height:72px;border:1px solid #dfe5ed;cursor:pointer;touch-action:none}
 #bps-compare .bps-ov:focus-visible{outline:2px solid #336b9c;outline-offset:2px}
@@ -37,10 +38,12 @@ CSS = """
 
 OVERVIEW_HTML = (
     '<div class="bps-overview" hidden><div class="bps-ov-head"><span><strong>Whole selection</strong>'
-    ' · click, drag or use the arrow keys to jump; each line shows the highest value among the columns it covers</span>'
+    ' · click, drag or use the arrow keys to jump</span>'
     '<span class="bps-ov-nav"><button type="button" class="bps-ov-left" aria-label="Scroll heatmap left">◀ Left</button>'
     '<span class="bps-ov-range"></span>'
     '<button type="button" class="bps-ov-right" aria-label="Scroll heatmap right">Right ▶</button></span></div>'
+    '<div class="bps-ov-note">An overview of every selected column, squeezed to fit. Where several columns share one pixel, '
+    'the highest of their values is shown.</div>'
     '<canvas class="bps-ov" role="slider" tabindex="0" aria-label="Heatmap position. Arrow keys, Page Up, Page Down, '
     'Home and End move through the columns; click or drag to jump"></canvas></div>'
 )
