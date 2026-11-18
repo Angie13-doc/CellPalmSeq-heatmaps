@@ -56,7 +56,7 @@ Genes are rows and columns are cell lines, tissues, cell types or samples, colou
 - **Filter** by the dataset's categories, and choose which genes to show (all, ZDHHC only, non-ZDHHC, or any set).
 - **Colour scale:** *Fixed across all cells* uses the dataset maximum, which is best for comparing searches. *Fit current selection* uses the maximum across everything selected, on screen or not.
 - **Expression scale** (CCLE, Sanger and HPA pages): original values, or log₂(value + 1) for colours. The hover always shows the original value and, with log₂ on, the log value too (e.g. "25.85 TPM (log₂(TPM + 1) = 4.747)"). CSV keeps the original values.
-- **Rank** genes and/or columns by mean expression.
+- **Rank** genes and/or columns by mean expression, within the current search and filters: genes by their mean across the matching columns, columns by their mean over the selected genes (with one gene selected, by that gene alone). Ranking uses the original values.
 - **Browse:** every matching column sits in one strip that scrolls sideways. When the strip is wider than the view, a *Whole selection* band above it summarises everything selected, with a frame for the visible part. Click or drag the band, use its ◀ Left / Right ▶ buttons, or Tab to it and use the arrow keys, Page Up/Down and Home/End. *Heatmap size* zooms.
 
   **How the *Whole selection* band is drawn.** The band shows every selected column, squeezed to the width of the heatmap on your screen, with genes in the same order as the heatmap rows. When there are more columns than screen pixels across the band, several neighbouring columns share one screen pixel, and that pixel takes the **highest** of their values (for each gene). So a single strongly expressing column always shows up in the band, even next to low ones. A dark spot means at least one column there reaches that level, not that every column does; the heatmap below shows each column's own value. How much the band squeezes depends on the number of columns and on your screen: its width, and how many pixels it packs into that width. On a standard screen, Yao 2023 GABAergic (2,025 clusters) puts about 2 columns in each pixel and Glutamatergic (2,597) about 3; on a high-resolution (Retina) screen, about 1 and 1.4. When each column has its own screen pixel, the band shows exact values. Thin vertical lines in the band mark the starts of categories or comparison groups.
@@ -89,6 +89,7 @@ The dataset pages were first generated outside this repository from the source m
 | `compact_heatmap_data.py` | Stored the embedded data compactly and added the decoder. Before writing a page, it checks that the decoded data matches the original exactly. |
 | `verify_compact_data.js` | Repeats that check with Node.js: `node tools/verify_compact_data.js ORIGINAL.html COMPACT.html`. |
 | `fix_export_scale_bar.py` | Laid out the SVG/PNG scale bar so it is never clipped. |
+| `fix_population_ranking.py` | Made ranking on the two HPA single-cell pages respect the search, filters and selected genes. |
 | `hover_original_and_log.py` | Made the hover show the original value and, with log₂ on, the log value too. |
 
 The same scripts are used in BrainPalmSeq and handle both sites' pages.

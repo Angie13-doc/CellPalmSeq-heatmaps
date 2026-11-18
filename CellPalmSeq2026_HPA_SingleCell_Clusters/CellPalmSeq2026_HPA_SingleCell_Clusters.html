@@ -204,13 +204,11 @@ $('.zoom-reset').addEventListener('click',()=>setZoom(100));
 zoomRange.addEventListener('input',()=>setZoom(Number(zoomRange.value)));
 function render(){tip.hidden=true;
 $('.broad-count').textContent=broadSelected.size===0?'None selected':broadSelected.size===broadNames.length?'All tissues selected':broadSelected.size+' categories selected';
- // Ranking deliberately ignores tissue, search, and population filters.
- // A gene ranking covers every population; a population ranking covers every gene.
- const globalRanking=rankGenes.checked||rankCells.checked;
- const groups=globalRanking?[{label:'',cells:[...cells.keys()]}]:selection().groups;
- let genes=rankGenes.checked?[...geneNames]:geneNames.filter(g=>chosen.has(g));
- const allPopulationNames=[...cells.keys()];
- function meanForGene(g){let sum=0,n=0;for(const c of allPopulationNames){const r=values.get(c+'\u0000'+g);if(r&&Number.isFinite(r.Expression)){sum+=r.Expression;n++}}return n?sum/n:-Infinity}
+ // Ranking works within the current search and filters: genes by their mean across the
+ // matching populations, populations by their mean over the selected genes.
+ const groups=selection().groups;
+ let genes=geneNames.filter(g=>chosen.has(g));
+ function meanForGene(g){let sum=0,n=0;for(const group of groups)for(const c of group.cells){const r=values.get(c+'\u0000'+g);if(r&&Number.isFinite(r.Expression)){sum+=r.Expression;n++}}return n?sum/n:-Infinity}
  function meanForCell(c){let sum=0,n=0;for(const g of genes){const r=values.get(c+'\u0000'+g);if(r&&Number.isFinite(r.Expression)){sum+=r.Expression;n++}}return n?sum/n:-Infinity}
  if(rankGenes.checked){const scores=new Map(genes.map(g=>[g,meanForGene(g)]));genes.sort((a,b)=>scores.get(b)-scores.get(a)||geneNames.indexOf(a)-geneNames.indexOf(b))}
  const rankedGroups=groups.map(group=>({...group,cells:rankCells.checked?[...group.cells].sort((a,b)=>meanForCell(b)-meanForCell(a)||group.cells.indexOf(a)-group.cells.indexOf(b)):group.cells}));
