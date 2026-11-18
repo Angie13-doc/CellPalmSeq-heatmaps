@@ -319,7 +319,7 @@ $('.export').addEventListener('click',()=>{
  const metadataKeys=[...new Set(current.flatMap(r=>Object.keys(r.MatrixMetadata||{})))];
  const keys=['Gene','Population',...metadataKeys,'Expression_'+"source_matrix_units_unverified"];
  const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
- const csv=[keys.map(esc).join(','),...current.map(r=>[r.Gene,r.ClusterName,...metadataKeys.map(k=>(r.MatrixMetadata||{})[k]??''),r.SourceValue].map(esc).join(','))].join('\\r\\n');
+ const csv=[keys.map(esc).join(','),...current.map(r=>[r.Gene,r.ClusterName,...metadataKeys.map(k=>(r.MatrixMetadata||{})[k]??''),r.SourceValue].map(esc).join(','))].join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
  link.href=url;link.download="CellPalmSeq2026_Lab_Calu3"+'_selection.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
