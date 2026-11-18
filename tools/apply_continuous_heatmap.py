@@ -42,8 +42,8 @@ OVERVIEW_HTML = (
     '<span class="bps-ov-nav"><button type="button" class="bps-ov-left" aria-label="Scroll heatmap left">◀ Left</button>'
     '<span class="bps-ov-range"></span>'
     '<button type="button" class="bps-ov-right" aria-label="Scroll heatmap right">Right ▶</button></span></div>'
-    '<div class="bps-ov-note">An overview of every selected column, squeezed to fit. Where several columns share one pixel, '
-    'the highest of their values is shown.</div>'
+    '<div class="bps-ov-note">An overview of every selected column, squeezed to the width of your screen. '
+    'Where several columns share one screen pixel, the highest of their values is shown.</div>'
     '<canvas class="bps-ov" role="slider" tabindex="0" aria-label="Heatmap position. Arrow keys, Page Up, Page Down, '
     'Home and End move through the columns; click or drag to jump"></canvas></div>'
 )
