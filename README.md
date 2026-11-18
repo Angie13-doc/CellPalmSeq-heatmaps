@@ -31,3 +31,4 @@ These are supplementary, not replacements for individual cell-line heatmaps.
 ## Colour map and gene-name styling (2026-11-17)
 - All 15 heatmaps use one colour map: reversed Hawaii (Crameri Scientific Colour Maps; pale cyan = low, dark magenta = high), 50 steps. Palette selector removed. Re-apply with `tools/apply_hawaii_palette.py`.
 - Gene names are italic: heatmap row labels (screen, SVG, PNG), gene checklist, hover Gene value, and the Search by Gene hover heading. Letters unchanged. Re-apply with `tools/italicize_gene_names.py`.
+- Heatmaps show every matching column in one continuous, sideways-scrolling strip (no pages of 150), with a whole-selection summary band above it (click or drag to jump; shown when the heatmap is wider than the view). "Fit current selection" scales to every selected column. CSV/SVG/PNG exports cover the whole selection, and SVG/PNG colours follow the log₂ option. Re-apply with `tools/apply_continuous_heatmap.py`.
