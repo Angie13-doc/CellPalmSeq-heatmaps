@@ -121,6 +121,7 @@ Most scripts are one-off migrations and refuse to run twice on the same page. Ch
 | File | Contents |
 |---|---|
 | `CITATION.cff` | Citation metadata for GitHub's "Cite this repository" button; points to the paper in [Citation](#citation). |
+| `LICENSE` | CC BY 4.0 legal code; see [Licence](#licence) for what it covers. |
 | `index.html` | Landing page listing all 15 datasets and Search by Gene. |
 | `Search_by_Gene/` | The Search by Gene page, its embed snippet and README. |
 | `QA_REPORT.md` | Checks from the original release, including what was not validated at the time. |
@@ -146,6 +147,15 @@ Wild AR, Hogg PW, Flibotte S, Kochhar S, Hollman RB, Haas K, Bamji SX. CellPalmS
 For the nervous system, see the companion resource BrainPalmSeq ([Angie13-doc/BrainPalmSeq-heatmaps](https://github.com/Angie13-doc/BrainPalmSeq-heatmaps)).
 
 Please also cite the original source of each dataset you use (Broad DepMap CCLE, Sanger Cell Model Passports, the Human Protein Atlas, and the studies behind each laboratory cell line).
+## Licence
+
+The code, page design, documentation, and curated gene and population selections in this repository are licensed under the [Creative Commons Attribution 4.0 International licence (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). The full legal code is in [`LICENSE`](LICENSE).
+
+The licence does not cover:
+
+- **Expression data.** The expression values come from Broad DepMap CCLE, Sanger Cell Model Passports, the Human Protein Atlas and the studies behind each laboratory cell line, and remain under each original source's terms.
+- **Colour maps.** Hawaii (Fabio Crameri's Scientific Colour Maps), Turbo (Google) and Spectral (ColorBrewer) remain under their own licences.
+
 ## Colour map and gene-name styling (2026-11-17)
 - All 15 heatmaps use one colour map: reversed Hawaii (Crameri Scientific Colour Maps; pale cyan = low, dark magenta = high), 50 steps. Palette selector removed. Re-apply with `tools/apply_hawaii_palette.py`.
 - Gene names are italic: heatmap row labels (screen, SVG, PNG), gene checklist, hover Gene value, and the Search by Gene hover heading. Letters unchanged. Re-apply with `tools/italicize_gene_names.py`.
