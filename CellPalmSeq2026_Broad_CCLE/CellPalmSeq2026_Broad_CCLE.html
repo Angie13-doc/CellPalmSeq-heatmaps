@@ -119,7 +119,9 @@ bpsCmap.addEventListener('change',()=>{bpsSetColourMap(bpsCmap.value);render()})
 $('.reset').addEventListener('click',()=>bpsSetColourMap('hawaii'));
 
 const regionContainer=$('.region-groups'),scale=$('.scale'),canvas=$('.canvas'),scroll=$('.plot-scroll'),tip=$('.tooltip'),summary=$('.summary'),exportBtn=$('.export');
-const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:'base'}),geneNames=[...new Set(rows.map(r=>r.Gene))].sort(collator.compare);
+// Gene order: de-S-acylating enzymes, then accessory proteins, then ZDHHC S-acylating enzymes.
+const bpsGeneGroup=g=>{const s=String(g).toLowerCase();return /^abhd/.test(s)?0:/^lypla\d/.test(s)?1:/^ppt/.test(s)?2:/^(selenok|selk)$/.test(s)?3:/^golga/.test(s)?4:/^zdhhc/.test(s)?5:6};
+const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:'base'}),geneNames=[...new Set(rows.map(r=>r.Gene))].sort((a,b)=>bpsGeneGroup(a)-bpsGeneGroup(b)||collator.compare(a,b));
 const cells=new Map(),values=new Map();for(const r of rows){if(!cells.has(r.ClusterName))cells.set(r.ClusterName,r);values.set(r.ClusterName+'\u0000'+r.Gene,r)}
 const rankGenes=$('.rank-genes'),rankCells=$('.rank-cells');
 // Broad region choices are sourced from the original Region2 metadata, including
