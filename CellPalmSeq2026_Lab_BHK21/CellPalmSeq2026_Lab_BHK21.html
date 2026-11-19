@@ -397,7 +397,7 @@ function cpsFigureSVG(){
  parts.push('</svg>');return {svg:parts.join(''),width:figW,height:fullHeight};
 }
 function cpsSaveBlob(blob,filename){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000)}
-function cpsExportSVG(){const fig=cpsFigureSVG();if(!fig)return;cpsSaveBlob(new Blob([fig.svg],{type:'image/svg+xml;charset=utf-8'}),document.title.replace(/[^a-z0-9_-]+/gi,'_')+'_heatmap.svg')}
+function cpsExportSVG(){const fig=cpsFigureSVG();if(!fig)return;cpsSaveBlob(new Blob([fig.svg],{type:'image/svg+xml;charset=utf-8'}),(location.pathname.split('/').filter(Boolean).pop()||'CellPalmSeq').replace(/\.html$/,'')+'_heatmap.svg')}
 async function cpsExportPNG(){
  const fig=cpsFigureSVG();if(!fig)return;
  // Keep PNG within practical browser canvas limits, while maximizing quality.
@@ -411,13 +411,13 @@ async function cpsExportPNG(){
   if(!context)throw new Error('Canvas unavailable');context.drawImage(img,0,0,w,h);
   const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));
   if(!blob)throw new Error('PNG encoding failed');
-  cpsSaveBlob(blob,document.title.replace(/[^a-z0-9_-]+/gi,'_')+'_heatmap.png');
+  cpsSaveBlob(blob,(location.pathname.split('/').filter(Boolean).pop()||'CellPalmSeq').replace(/\.html$/,'')+'_heatmap.png');
  }catch(e){console.error('Figure export failed',e);alert('PNG export failed. Try SVG or a smaller selection.')}finally{URL.revokeObjectURL(url)}
 }
 const cpsActions=$('.export').parentElement;
 const cpsSvgButton=document.createElement('button');cpsSvgButton.type='button';cpsSvgButton.textContent='Export SVG';cpsSvgButton.addEventListener('click',cpsExportSVG);
-const cpsPngButton=document.createElement('button');cpsPngButton.type='button';cpsPngButton.textContent='Export PNG (high-res)';cpsPngButton.addEventListener('click',cpsExportPNG);
-const cpsTransparent=document.createElement('label');cpsTransparent.style.cssText='font-size:11px;display:inline-flex;align-items:center;gap:4px';
+const cpsPngButton=document.createElement('button');cpsPngButton.type='button';cpsPngButton.textContent='Export PNG';cpsPngButton.addEventListener('click',cpsExportPNG);
+const cpsTransparent=document.createElement('label');cpsTransparent.style.cssText='font-size:11px;font-weight:400;display:flex;align-items:center;gap:4px;flex-basis:100%;margin:0';
 cpsTransparent.innerHTML='<input type="checkbox" class="figure-transparent"> Transparent background';
 cpsActions.append(cpsSvgButton,cpsPngButton,cpsTransparent);
 // Button order: Export PNG, Export SVG, Export CSV, transparent-background option, Reset.

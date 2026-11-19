@@ -93,6 +93,7 @@ The dataset pages were first generated outside this repository from the source m
 | `fix_population_ranking.py` | Made ranking on the two HPA single-cell pages respect the search, filters and selected genes. |
 | `add_colour_map_option.py` | Added the Hawaii / Turbo / Spectral colour map menu. |
 | `reorder_action_buttons.py` | Ordered the action buttons Export PNG · Export SVG · Export CSV, then Reset. |
+| `tidy_export_controls.py` | Shortened the PNG button label, put the transparent-background option on its own line, and named PNG/SVG files after the dataset. |
 | `hover_original_and_log.py` | Made the hover show the original value and, with log₂ on, the log value too. |
 
 The same scripts are used in BrainPalmSeq and handle both sites' pages.
