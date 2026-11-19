@@ -375,20 +375,24 @@ async function bpsPngWithDpi(blob,dpi){
 function bpsPngNote(scale,cssWidth){let note=root.querySelector('.export-note');
  if(!note){note=document.createElement('div');note.className='help export-note';note.setAttribute('role','status');$('.actions').after(note)}
  note.textContent=scale<BPS_PNG_DPI/96-1e-6?'PNG saved at 300 DPI, '+(cssWidth*scale/BPS_PNG_DPI).toFixed(1)+' in wide: this selection is too wide for full size. Use Export SVG for full detail.':''}
+// SVG caption: the legend's original "Expression (unit)" text, read before the page rewrites it.
+const cpsLegendBase=($('.legend span:first-child')?.textContent||'Expression').trim();
 function cpsFigureSVG(){
  if(!layout || !layout.n || !layout.genes.length) return null;
  const {n,genes,cols,positions,width,height}=layout;
  const high=Number($('.high').textContent)||1;
- const legendText=$('.legend span:first-child')?.textContent||'Expression';
+ const legendText=$('#colour-transform-select')?.value==='log'?($('.legend span:first-child')?.textContent||cpsLegendBase):cpsLegendBase;
+ const head=44,title='CellPalmSeq: '+(location.pathname.split('/').filter(Boolean).pop()||'').replace(/\.html$/,'').replace(/^CellPalmSeq2026_/,'');
  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
  const transparent=$('.figure-transparent')?.checked;
  // Legend below the heatmap: units line, colour bar, then "0" and the maximum on one line under the bar.
  const measureText=(s,font)=>{const c=document.createElement('canvas').getContext('2d');c.font=font;return c.measureText(String(s)).width};
  const highLabel=high.toFixed(3),lx=left,rampW=Math.min(220,Math.max(160,width-left-right));
  const legendW=Math.max(measureText(legendText,'11px Arial'),rampW,measureText('0','10px Arial')+measureText(highLabel,'10px Arial')+16);
- const figW=Math.ceil(Math.max(width,lx+legendW+right)),ly=height+16,ry=ly+8,labelY=ry+12+12,fullHeight=Math.ceil(labelY+10);
+ const figW=Math.ceil(Math.max(width,lx+legendW+right,48+measureText(title,'bold 16px Arial'))),ly=height+16,ry=ly+8,labelY=ry+12+12,fullHeight=Math.ceil(labelY+10)+head;
  const parts=[`<svg xmlns="http://www.w3.org/2000/svg" width="${figW}" height="${fullHeight}" viewBox="0 0 ${figW} ${fullHeight}">`];
  if(!transparent)parts.push(`<rect width="100%" height="100%" fill="#ffffff"/>`);
+ parts.push(`<text x="24" y="25" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#263649">${esc(title.slice(0,125))}</text>`,`<g transform="translate(0 ${head})">`);
  for(let x=0;x<n;x++)for(let y=0;y<genes.length;y++){
   const r=layout.lookup.get(y*n+x);if(!r)continue;
   const cval=bpsColourOf(r),fraction=high>0?cval/high:0;
@@ -408,10 +412,10 @@ function cpsFigureSVG(){
  parts.push(`<text x="${lx}" y="${ly}" font-family="Arial,sans-serif" font-size="11" fill="#263649">${esc(legendText)}</text>`);
  const stops=palette.map((c,i)=>`<stop offset="${(100*i/Math.max(1,palette.length-1)).toFixed(3)}%" stop-color="${esc(c)}"/>`).join('');
  parts.push(`<defs><linearGradient id="cps-legend-gradient" x1="0" y1="0" x2="1" y2="0">${stops}</linearGradient></defs>`);
- parts.push(`<rect x="${lx}" y="${ry}" width="${rampW}" height="12" fill="url(#cps-legend-gradient)" stroke="#9aa9b6" stroke-width=".5"/>`);
+ parts.push(`<rect x="${lx}" y="${ry}" width="${rampW}" height="12" fill="url(#cps-legend-gradient)"/>`);
  parts.push(`<text x="${lx}" y="${labelY}" font-family="Arial,sans-serif" font-size="10" fill="#263649">0</text>`);
  parts.push(`<text x="${lx+rampW}" y="${labelY}" text-anchor="end" font-family="Arial,sans-serif" font-size="10" fill="#263649">${esc(highLabel)}</text>`);
- parts.push('</svg>');return {svg:parts.join(''),width:figW,height:fullHeight};
+ parts.push('</g>','</svg>');return {svg:parts.join(''),width:figW,height:fullHeight};
 }
 function cpsSaveBlob(blob,filename){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000)}
 function cpsExportSVG(){const fig=cpsFigureSVG();if(!fig)return;cpsSaveBlob(new Blob([fig.svg],{type:'image/svg+xml;charset=utf-8'}),(location.pathname.split('/').filter(Boolean).pop()||'CellPalmSeq').replace(/\.html$/,'')+'_heatmap.svg')}
