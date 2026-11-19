@@ -63,7 +63,7 @@ Genes are rows and columns are cell lines, tissues, cell types or samples, colou
   **How the *Whole selection* band is drawn.** The band shows every selected column, squeezed to the width of the heatmap on your screen, with genes in the same order as the heatmap rows. When there are more columns than screen pixels across the band, several neighbouring columns share one screen pixel, and that pixel takes the **highest** of their values (for each gene). So a single strongly expressing column always shows up in the band, even next to low ones. A dark spot means at least one column there reaches that level, not that every column does; the heatmap below shows each column's own value. How much the band squeezes depends on the number of columns and on your screen: its width, and how many pixels it packs into that width. On a standard screen, Yao 2023 GABAergic (2,025 clusters) puts about 2 columns in each pixel and Glutamatergic (2,597) about 3; on a high-resolution (Retina) screen, about 1 and 1.4. When each column has its own screen pixel, the band shows exact values. Thin vertical lines in the band mark the starts of categories or comparison groups.
 
 - **Hover** (or tap) a tile for the gene, the column's full source metadata, and the expression value.
-- **Export** the whole selection as CSV, SVG or high-resolution PNG, optionally with a transparent background. Very wide selections may need SVG.
+- **Export** the whole selection as PNG, SVG or CSV; PNG and SVG optionally with a transparent background. PNGs are 300 DPI: drawn at 3.125× the on-screen figure (300 DPI at its natural size, where 96 px = 1 inch) and tagged 300 DPI, so they open at the right print size. A selection too wide for that (over 16,000 px on a side) is saved smaller, still at 300 DPI, with a note suggesting SVG; one too wide even for that asks for SVG.
 
 **Search by Gene** (`Search_by_Gene/`) shows one gene across HPA Normal Tissue (nTPM), HPA single-cell types (nCPM), Broad CCLE averaged by primary disease and Sanger CMP averaged by cancer type (TPM). Averages are computed within each study, never between studies.
 
@@ -92,6 +92,9 @@ The dataset pages were first generated outside this repository from the source m
 | `fix_export_scale_bar.py` | Laid out the SVG/PNG scale bar so it is never clipped. |
 | `fix_population_ranking.py` | Made ranking on the two HPA single-cell pages respect the search, filters and selected genes. |
 | `add_colour_map_option.py` | Added the Hawaii / Turbo / Spectral colour map menu. |
+| `reorder_action_buttons.py` | Ordered the action buttons Export PNG · Export SVG · Export CSV, then Reset. |
+| `png_300dpi.py` | PNG export at 300 DPI (drawn at 3.125×, DPI recorded in the file), with the same size limits on both sites. |
+| `tidy_export_controls.py` | Shortened the PNG button label, put the transparent-background option on its own line, and named PNG/SVG files after the dataset. |
 | `hover_original_and_log.py` | Made the hover show the original value and, with log₂ on, the log value too. |
 
 The same scripts are used in BrainPalmSeq and handle both sites' pages.
