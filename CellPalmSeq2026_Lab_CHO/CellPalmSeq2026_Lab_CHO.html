@@ -81,8 +81,8 @@
 </style>
 <div class="bps-layout"><aside class="bps-sidebar" aria-label="Heatmap search and display controls">
 <div class="controls">
-<div class="wide"><label>Samples / metadata to compare</label><div class="region-groups"></div><button type="button" class="add-region">+ Add another tissue search</button><div class="help">Search all 1,406 samples by their names or original source-matrix metadata. Multiple searches form separate groups. All matches appear in one continuous heatmap.</div></div>
-<div class="broad-dropdown"><label id="bps-broad-label">Cell-line categories</label><button type="button" class="broad-toggle" aria-expanded="false" aria-controls="bps-broad-panel"><span class="broad-count">All sample categories</span><span aria-hidden="true">▾</span></button><div id="bps-broad-panel" class="broad-panel" hidden><div class="broad-tools"><button type="button" class="broad-all">All sample categories</button><button type="button" class="broad-clear">Clear</button></div><div class="broad-list"></div></div></div>
+<div class="wide"><label>Populations to compare</label><div class="region-groups"></div><button type="button" class="add-region">+ Add another search</button><div class="help">Search all 1,406 samples by their names or original source-matrix metadata. Multiple searches form separate groups. All matches appear in one continuous heatmap.</div></div>
+<div class="broad-dropdown"><label id="bps-broad-label">Samples</label><button type="button" class="broad-toggle" aria-expanded="false" aria-controls="bps-broad-panel"><span class="broad-count">All samples</span><span aria-hidden="true">▾</span></button><div id="bps-broad-panel" class="broad-panel" hidden><div class="broad-tools"><button type="button" class="broad-all">All samples</button><button type="button" class="broad-clear">Clear</button></div><div class="broad-list"></div></div></div>
 <div class="gene-dropdown"><label id="bps-gene-label">Genes to display</label><button type="button" class="gene-toggle" aria-expanded="false" aria-controls="bps-gene-panel" aria-labelledby="bps-gene-label bps-gene-count"><span id="bps-gene-count" class="gene-count">All genes (40)</span><span aria-hidden="true">▾</span></button><div id="bps-gene-panel" class="gene-panel" hidden><div class="gene-tools"><button type="button" data-pick="all">All genes</button><button type="button" data-pick="zdhhc">ZDHHC only</button><button type="button" data-pick="nonzdhhc">Non-ZDHHC only</button><button type="button" data-pick="none">Clear</button></div><div class="gene-list"></div></div><div class="help">Tick multiple genes to compare their expression.</div></div>
 <div><label for="bps-scale">Colour scale</label><select id="bps-scale" class="scale"><option value="fixed">Fixed across all cells (dataset maximum)</option><option value="dynamic">Fit current selection</option></select></div>
 <div class="wide"><label for="bps-cmap">Colour map</label><select id="bps-cmap"><option value="hawaii">Hawaii</option><option value="turbo">Turbo (fine detail; not colour-blind safe)</option><option value="spectral">Spectral (CellPalmSeq v1.0; not colour-blind safe)</option></select></div>
@@ -184,7 +184,7 @@ for(const record of cells.values())for(const [field,kind] of suggestionFields){c
 const suggestions=[...suggestionMap.values()];
 function rebuildRegionInputs(){regionContainer.replaceChildren();regionQueries.forEach((query,i)=>{
  const entry=document.createElement('div');entry.className='region-entry';
- const input=document.createElement('input');input.type='search';input.value=query;input.autocomplete='off';input.setAttribute('aria-label','Tissue or organ search '+(i+1));input.setAttribute('aria-autocomplete','list');input.setAttribute('aria-expanded','false');input.placeholder='e.g. '+(searchExamples[i===0?0:1]||searchExamples[0]||'cell type');
+ const input=document.createElement('input');input.type='search';input.value=query;input.autocomplete='off';input.setAttribute('aria-label','Population search '+(i+1));input.setAttribute('aria-autocomplete','list');input.setAttribute('aria-expanded','false');input.placeholder='e.g. '+(searchExamples[i===0?0:1]||searchExamples[0]||'cell type');
  const panel=document.createElement('div');panel.className='bps-suggest';panel.hidden=true;panel.setAttribute('role','listbox');
  let matchesList=[],active=-1;
  function hide(){panel.hidden=true;input.setAttribute('aria-expanded','false');active=-1}
@@ -211,7 +211,7 @@ $('.zoom-out').addEventListener('click',()=>setZoom(Number(zoomRange.value)-25))
 $('.zoom-reset').addEventListener('click',()=>setZoom(100));
 zoomRange.addEventListener('input',()=>setZoom(Number(zoomRange.value)));
 function render(){tip.hidden=true;
-$('.broad-count').textContent=broadSelected.size===0?'None selected':broadSelected.size===broadNames.length?'All sample categories selected':broadSelected.size+' categories selected';
+$('.broad-count').textContent=broadSelected.size===0?'None selected':broadSelected.size===broadNames.length?'All samples selected':broadSelected.size+' categories selected';
  const {groups}=selection();
  let genes=geneNames.filter(g=>chosen.has(g));
  // Ranking is computed before paging; population means use selected genes.
