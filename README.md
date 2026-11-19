@@ -97,6 +97,8 @@ The dataset pages were first generated outside this repository from the source m
 | `tidy_export_controls.py` | Shortened the PNG button label, put the transparent-background option on its own line, and named PNG/SVG files after the dataset. |
 | `hover_original_and_log.py` | Made the hover show the original value and, with log₂ on, the log value too. |
 | `gene_order.py` | Ordered genes by function (de-S-acylating, accessory, ZDHHC) instead of alphabetically, as on BrainPalmSeq. |
+| `name_category_box.py` | Named the category box after what it holds, with one name per kind on both sites (Cell categories, Primary disease, Tissues, Samples); Clear shows "None selected" on every page. |
+| `search_wording.py` | One wording for the population search on every page: "Populations to compare", "+ Add another search". |
 
 The same scripts are used in BrainPalmSeq and handle both sites' pages.
 
