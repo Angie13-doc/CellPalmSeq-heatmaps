@@ -352,6 +352,21 @@ $('.reset').addEventListener('click',()=>{zoomFactor=1;cw=12;rh=14;zoomRange.val
 $('.export').addEventListener('click',()=>{if(!current.length)return;const keys=['Gene','Cell line',...Object.keys(current[0].MatrixMetadata||{}).filter(k=>k!=="model_name"),'Expression_TPM'],esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[keys.map(esc).join(','),...current.map(r=>[r.Gene,r.Region,...keys.slice(2,-1).map(k=>r.MatrixMetadata[k]),r.TPM].map(esc).join(','))].join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='CellPalmSeq2026_Sanger_CMP_selection.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 
 // Publication-quality figure exports: SVG vectors; PNG rasterized from the same SVG.
+// PNG export at 300 DPI: draw at 300/96 of the figure's on-screen size (96 px = 1 inch) and
+// record 300 DPI in the file. Wider figures are scaled to fit browser limits and print smaller.
+const BPS_PNG_DPI=300,BPS_PNG_MAX_SIDE=16000,BPS_PNG_MAX_PIXELS=60e6;
+function bpsPngScale(w,h){return Math.min(BPS_PNG_DPI/96,BPS_PNG_MAX_SIDE/w,BPS_PNG_MAX_SIDE/h,Math.sqrt(BPS_PNG_MAX_PIXELS/(w*h)))}
+function bpsCrc32(bytes){let crc=0xffffffff;for(let n=0;n<bytes.length;n++){let c=(crc^bytes[n])&0xff;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;crc=(crc>>>8)^c}return (crc^0xffffffff)>>>0}
+async function bpsPngWithDpi(blob,dpi){
+ const src=new Uint8Array(await blob.arrayBuffer()),ppm=Math.round(dpi/0.0254),phys=new Uint8Array(21),dv=new DataView(phys.buffer);
+ dv.setUint32(0,9);phys.set([0x70,0x48,0x59,0x73],4);dv.setUint32(8,ppm);dv.setUint32(12,ppm);phys[16]=1;dv.setUint32(17,bpsCrc32(phys.subarray(4,17)));
+ const parts=[src.subarray(0,8)];let i=8;const sv=new DataView(src.buffer,src.byteOffset,src.byteLength);
+ while(i<src.length){const len=sv.getUint32(i),type=String.fromCharCode(...src.subarray(i+4,i+8)),end=i+12+len;
+  if(type!=='pHYs')parts.push(src.subarray(i,end));if(type==='IHDR')parts.push(phys);i=end}
+ return new Blob(parts,{type:'image/png'})}
+function bpsPngNote(scale,cssWidth){let note=root.querySelector('.export-note');
+ if(!note){note=document.createElement('div');note.className='help export-note';note.setAttribute('role','status');$('.actions').after(note)}
+ note.textContent=scale<BPS_PNG_DPI/96-1e-6?'PNG saved at 300 DPI, '+(cssWidth*scale/BPS_PNG_DPI).toFixed(1)+' in wide: this selection is too wide for full size. Use Export SVG for full detail.':''}
 function cpsFigureSVG(){
  if(!layout || !layout.n || !layout.genes.length) return null;
  const {n,genes,cols,positions,width,height}=layout;
@@ -395,7 +410,7 @@ function cpsExportSVG(){const fig=cpsFigureSVG();if(!fig)return;cpsSaveBlob(new 
 async function cpsExportPNG(){
  const fig=cpsFigureSVG();if(!fig)return;
  // Keep PNG within practical browser canvas limits, while maximizing quality.
- const factor=Math.min(4,12000/fig.width,12000/fig.height,Math.sqrt(55000000/(fig.width*fig.height)));
+ const factor=bpsPngScale(fig.width,fig.height);
  if(factor<1){alert('This heatmap is too large for a single PNG. Export SVG instead, or narrow the selection.');return}
  const w=Math.round(fig.width*factor),h=Math.round(fig.height*factor);
  const url=URL.createObjectURL(new Blob([fig.svg],{type:'image/svg+xml;charset=utf-8'}));
@@ -403,9 +418,9 @@ async function cpsExportPNG(){
   const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('SVG could not be rendered'));img.src=url});
   const c=document.createElement('canvas');c.width=w;c.height=h;const context=c.getContext('2d');
   if(!context)throw new Error('Canvas unavailable');context.drawImage(img,0,0,w,h);
-  const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));
+  const raw=await new Promise(resolve=>c.toBlob(resolve,'image/png'));const blob=raw&&await bpsPngWithDpi(raw,BPS_PNG_DPI);
   if(!blob)throw new Error('PNG encoding failed');
-  cpsSaveBlob(blob,(location.pathname.split('/').filter(Boolean).pop()||'CellPalmSeq').replace(/\.html$/,'')+'_heatmap.png');
+  cpsSaveBlob(blob,(location.pathname.split('/').filter(Boolean).pop()||'CellPalmSeq').replace(/\.html$/,'')+'_heatmap.png');bpsPngNote(factor,fig.width);
  }catch(e){console.error('Figure export failed',e);alert('PNG export failed. Try SVG or a smaller selection.')}finally{URL.revokeObjectURL(url)}
 }
 const cpsActions=$('.export').parentElement;
