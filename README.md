@@ -120,6 +120,7 @@ Most scripts are one-off migrations and refuse to run twice on the same page. Ch
 
 | File | Contents |
 |---|---|
+| `CITATION.cff` | Citation metadata for GitHub's "Cite this repository" button; points to the paper in [Citation](#citation). |
 | `index.html` | Landing page listing all 15 datasets and Search by Gene. |
 | `Search_by_Gene/` | The Search by Gene page, its embed snippet and README. |
 | `QA_REPORT.md` | Checks from the original release, including what was not validated at the time. |
