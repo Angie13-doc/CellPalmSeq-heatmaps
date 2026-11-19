@@ -414,6 +414,8 @@ const cpsPngButton=document.createElement('button');cpsPngButton.type='button';c
 const cpsTransparent=document.createElement('label');cpsTransparent.style.cssText='font-size:11px;display:inline-flex;align-items:center;gap:4px';
 cpsTransparent.innerHTML='<input type="checkbox" class="figure-transparent"> Transparent background';
 cpsActions.append(cpsSvgButton,cpsPngButton,cpsTransparent);
+// Button order: Export PNG, Export SVG, Export CSV, transparent-background option, Reset.
+cpsActions.append(cpsPngButton,cpsSvgButton,$('.export'),cpsTransparent,$('.reset'));
 
 render();
 })();
