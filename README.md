@@ -8,7 +8,7 @@ S-palmitoylation is a reversible lipid modification that controls where proteins
 
 This repository holds the 2026 heatmap release: one interactive heatmap per dataset, plus a Search by Gene page.
 
-**Genes shown (up to 40):** the ZDHHC enzymes (*ZDHHC1*–*9*, *11*, *11B* and *12*–*24* in human data; *Zdhhc1*–*9* and *11*–*25* in rodent data), the depalmitoylating enzymes *LYPLA1*, *LYPLA2* and *PPT1*, ABHD-family hydrolases (*ABHD4*, *ABHD6*, *ABHD10*, *ABHD11*, *ABHD12*, *ABHD13*, *ABHD16A*, *ABHD17A*–*C*), and the accessory proteins *GOLGA7*, *GOLGA7B* and *SELENOK*. Gene symbols keep each source's spelling. Some laboratory matrices contain fewer genes (see the table).
+**Genes shown (up to 40),** in this order on every heatmap: the de-S-acylating enzymes (the ABHD-family hydrolases *ABHD4*, *ABHD6*, *ABHD10*, *ABHD11*, *ABHD12*, *ABHD13*, *ABHD16A* and *ABHD17A*–*C*, then *LYPLA1*, *LYPLA2* and *PPT1*), the accessory proteins *SELENOK*, *GOLGA7* and *GOLGA7B*, and the ZDHHC S-acylating enzymes (*ZDHHC1*–*9*, *11*, *11B* and *12*–*24* in human data; *Zdhhc1*–*9* and *11*–*25* in rodent data). Gene symbols keep each source's spelling. Some laboratory matrices contain fewer genes (see the table).
 
 ## Live pages
 
@@ -96,6 +96,7 @@ The dataset pages were first generated outside this repository from the source m
 | `png_300dpi.py` | PNG export at 300 DPI (drawn at 3.125×, DPI recorded in the file), with the same size limits on both sites. |
 | `tidy_export_controls.py` | Shortened the PNG button label, put the transparent-background option on its own line, and named PNG/SVG files after the dataset. |
 | `hover_original_and_log.py` | Made the hover show the original value and, with log₂ on, the log value too. |
+| `gene_order.py` | Ordered genes by function (de-S-acylating, accessory, ZDHHC) instead of alphabetically, as on BrainPalmSeq. |
 
 The same scripts are used in BrainPalmSeq and handle both sites' pages.
 
