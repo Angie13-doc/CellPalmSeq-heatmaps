@@ -78,7 +78,7 @@ Each heatmap is a single static HTML file with no server, build step or external
 
 ## How it is built
 
-The dataset pages were first generated outside this repository from the source matrices in each folder and uploaded as release archives. That generator is not in this repository; the archives at the root are earlier releases. Since then, changes have been made directly to the pages with the scripts in `tools/`. Each script edits every page the same way and stops without writing anything if a page doesn't match what it expects:
+The dataset pages were first generated outside this repository from the source matrices in each folder and uploaded as release archives. That generator is not in this repository; the earlier release archives remain in the repository's history. Since then, changes have been made directly to the pages with the scripts in `tools/`. Each script edits every page the same way and stops without writing anything if a page doesn't match what it expects:
 
 | Script | What it did |
 |---|---|
@@ -120,11 +120,9 @@ Most scripts are one-off migrations and refuse to run twice on the same page. Ch
 
 | File | Contents |
 |---|---|
-| `index.html` | Landing page listing the datasets. It does not yet link the two mean pages. |
+| `index.html` | Landing page listing all 15 datasets and Search by Gene. |
 | `Search_by_Gene/` | The Search by Gene page, its embed snippet and README. |
 | `QA_REPORT.md` | Checks from the original release, including what was not validated at the time. |
-| `CellPalmSeq2026_*.zip` | Earlier release archives, kept for reference. |
-| `CellPalmSeq2026_Search_by_Gene_HOVER_CLEAN.html`, `_HOVER_FIXED.html`, `_UPDATED.html` | Earlier drafts of Search by Gene. Nothing links to them; the live page is in `Search_by_Gene/`. |
 
 ## Change history
 
